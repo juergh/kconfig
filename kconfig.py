@@ -6,7 +6,6 @@
 import json
 import os
 import re
-import sys
 
 # Mapping between Debian package and kernel source architecture names
 SRCARCH = {
@@ -37,6 +36,10 @@ class Kconfig():
         self._read_kconfig(self.kconfig)
 
     def _read_kconfig(self, kconfig):
+        """
+        Read (and parse) the provided kconfig file and recursively traverse all
+        included kconfig files as well.
+        """
         # Prevent reading the same Kconfig multiple times
         if kconfig in self._kconfigs:
             return
@@ -106,26 +109,8 @@ class Kconfig():
                     continue
 
     def save(self, filename):
+        """
+        Save the configs dict to a file
+        """
         with open(filename, 'w') as fh:
             json.dump(self.configs, fh)
-
-
-if __name__ == '__main__':
-    arch = 'amd64'
-    config = None
-    if len(sys.argv) > 1:
-        arch = sys.argv[1]
-    if len(sys.argv) > 2:
-        config = re.sub(r'^CONFIG_', '', sys.argv[2])
-
-    kconfig = Kconfig('.', 'Kconfig', arch)
-    if config:
-        data = kconfig.configs.get(config, {'help': []})
-        print(config)
-        print('\n'.join(['  ' + h for h in data['help']]))
-
-    else:
-        for config, data in kconfig.configs.items():
-            print()
-            print(config)
-            print('\n'.join(['  ' + h for h in data['help']]))
