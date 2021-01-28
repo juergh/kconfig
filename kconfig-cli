@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+#
+# A simple CLI script for the Kconfig library
+#
+
+import argparse
+import sys
+
+from kconfig import Kconfig
+
+# -----------------------------------------------------------------------------
+# Helper functions
+
+def _dec(name, *args, **kwargs):
+    def _decorator(func):
+        # Because of the sematics of decorator composition if we just append
+        # to the options list positional options will appear to be backwards.
+        func.__dict__.setdefault(name, []).insert(0, (args, kwargs))
+        return func
+    return _decorator
+
+
+def add_help(*args, **kwargs):
+    return _dec('help', *args, **kwargs)
+
+def add_arg(*args, **kwargs):
+    return _dec('arg', *args, **kwargs)
+
+def error(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+# -----------------------------------------------------------------------------
+# Subcommands
+
+@add_help('List all config options and show their help texts')
+def do_list_help(kconfig, _args):
+    for config, config_data in kconfig.configs.items():
+        print()
+        print(config)
+        config_help = config_data['help']
+        if not config_help:
+            config_help = ['No help']
+        print('\n'.join(['  ' + h for h in config_help]))
+
+@add_help('Show config option help text')
+@add_arg('config', help='Name of the Config option')
+def do_show_help(kconfig, args):
+    if args.config not in kconfig.configs:
+        error('Invalid config option name: {}'.format(args.config))
+        sys.exit(1)
+
+    config_help = kconfig.configs[args.config]['help']
+    if not config_help:
+        config_help = ['No help']
+    print('\n'.join(config_help))
+
+# -----------------------------------------------------------------------------
+# Main entry point
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-a', '--arch', default='amd64',
+                        help='Kernel architecture (default: amd64)')
+    parser.add_argument('-s', '--ksource', default='.',
+                        help='Path of the kernel source tree (default: ./)')
+    parser.add_argument('-k', '--kconfig', default='Kconfig',
+                        help='Name of the Kconfig file (default: Kconfig)')
+
+    # Add subparsers for the subcommands and walk through the 'do_' functions
+    subparsers = parser.add_subparsers(dest='subcommand', title='subcommands',
+                                       required=True)
+    module = sys.modules[__name__]
+    for attr in (a for a in dir(module) if a.startswith('do_')):
+        cmd_name = attr[3:].replace('_', '-')
+        cmd_cb = getattr(module, attr)
+        cmd_desc = cmd_cb.__doc__ or ''
+        cmd_help = getattr(cmd_cb, 'help', [])
+        cmd_args = getattr(cmd_cb, 'arg', [])
+
+        sparser = subparsers.add_parser(cmd_name, help=cmd_help[0][0][0],
+                                        description=cmd_desc, add_help=False)
+        sparser.add_argument('-h', '--help', action='help')
+        for (args, kwargs) in cmd_args:
+            sparser.add_argument(*args, **kwargs)
+        sparser.set_defaults(func=cmd_cb)
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Parse the Kconfig tree and call the subcommand
+    kconfig = Kconfig(args.ksource, args.kconfig, args.arch)
+    args.func(kconfig, args)
