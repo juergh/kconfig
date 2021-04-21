@@ -43,7 +43,7 @@ def do_list_help(kconfig, _args):
         print('\n'.join(['  ' + h for h in config_help]))
 
 @add_help('Show config option help text')
-@add_arg('config', help='Name of the Config option')
+@add_arg('config', help='Config option name')
 def do_show_help(kconfig, args):
     if args.config not in kconfig.configs:
         error('Invalid config option name: {}'.format(args.config))
@@ -61,10 +61,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--arch', default='amd64',
                         help='Kernel architecture (default: amd64)')
+    parser.add_argument('-d', '--debug', action='store_true', default=False,
+                        help='Enable debug output')
     parser.add_argument('-s', '--ksource', default='.',
                         help='Path of the kernel source tree (default: ./)')
     parser.add_argument('-k', '--kconfig', default='Kconfig',
-                        help='Name of the Kconfig file (default: Kconfig)')
+                        help='Kconfig filename (default: Kconfig)')
 
     # Add subparsers for the subcommands and walk through the 'do_' functions
     subparsers = parser.add_subparsers(dest='subcommand', title='subcommands',
@@ -88,5 +90,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Parse the Kconfig tree and call the subcommand
-    kconfig = Kconfig(args.ksource, args.kconfig, args.arch)
+    kconfig = Kconfig(args.ksource, args.kconfig, args.arch, debug=args.debug)
     args.func(kconfig, args)
