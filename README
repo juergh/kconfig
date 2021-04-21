@@ -1,0 +1,4 @@
+Kconfig is a simple Linux kernel config parser class.
+
+It's largely based on the kernel script scripts/kconfig/streamline_config.pl
+so all kudos to the kernel developers.
