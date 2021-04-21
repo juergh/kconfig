@@ -21,6 +21,28 @@ SRCARCH = {
     'x86': 'x86',
 }
 
+def read_line(fh):
+    """
+    Return complete (continued) lines
+    """
+    prev_line = ''
+    cont = False
+
+    for line in fh:
+        # Strip newlines and such
+        line = line.strip()
+
+        # Make sure that lines ending with \ continue
+        if cont:
+            line = prev_line + ' ' + line
+        if line.endswith('\\'):
+            cont = True
+            prev_line = line[:-1].strip()
+            continue
+        cont = False
+
+        yield line
+
 class Kconfig():
     def __init__(self, ksource, kconfig, arch, debug=False):
         self.ksource = ksource
@@ -52,23 +74,9 @@ class Kconfig():
         if self.debug:
             print('-- Read Kconfig {}'.format(source))
         with open(source) as fh:
-            prev_line = ''
-            cont = False
             state = 'NONE'
 
-            for line in fh:
-                # Strip newlines and such
-                line = line.rstrip()
-
-                # Make sure that lines ending with \ continue
-                if cont:
-                    line = prev_line + ' ' + line
-                if line.endswith('\\'):
-                    cont = True
-                    prev_line = line[:-1]
-                    continue
-                cont = False
-
+            for line in read_line(fh):
                 # Collect any Kconfig sources
                 m = re.match(r'^source\s+"?([^"]+)', line)
                 if m:
