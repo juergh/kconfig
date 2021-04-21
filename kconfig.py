@@ -164,10 +164,3 @@ class Kconfig():
                 if state == 'CONFIG_HELP' and line.strip():
                     self.configs[config]['help'].append(line.strip())
                     continue
-
-    def save(self, filename):
-        """
-        Save the configs dict to a file
-        """
-        with open(filename, 'w') as fh:
-            json.dump(self.configs, fh)
