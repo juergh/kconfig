@@ -143,6 +143,7 @@ class Kconfig():
                             'kconfig': [],
                             'help': [],
                             'depends': [],
+                            'selects': [],
                         }
                     # Add the Kconfig file that references this option
                     self.configs[config]['kconfig'].append(kconfig)
@@ -158,6 +159,12 @@ class Kconfig():
                     m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
                     if m:
                         self.configs[config]['depends'].append(m.group(1))
+                        continue
+
+                    # Config 'select' found
+                    m = re.match(r'^\s*select\s+(\S+)', line)
+                    if m:
+                        self.configs[config]['selects'].append(m.group(1))
                         continue
 
                     continue
