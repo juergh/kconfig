@@ -140,15 +140,24 @@ class Kconfig():
                         self.configs[config] = {
                             'kconfig': [kconfig],
                             'help': [],
+                            'depends': [],
                         }
                     else:
                         self.configs[config]['kconfig'].append(kconfig)
                     continue
 
-                # Config help found
-                if state == 'CONFIG' and re.match(r'^\s*(---)?help(---)?\s*$',
-                                                  line):
-                    state = 'CONFIG_HELP'
+                if state == 'CONFIG':
+                    # Config 'help' found
+                    if re.match(r'^\s*(---)?help(---)?\s*$', line):
+                        state = 'CONFIG_HELP'
+                        continue
+
+                    # Config 'depends on' found
+                    m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
+                    if m:
+                        self.configs[config]['depends'].append(m.group(1))
+                        continue
+
                     continue
 
                 # Collect (non-empty) config help lines
