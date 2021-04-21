@@ -53,9 +53,46 @@ class Kconfig():
         # The found config options
         self.configs = {}
 
+        # The list of all makefiles
+        self.makefiles = None
+
         # Read and parse the Kconfig tree
         self._kconfigs = {}
         self._read_kconfig(self.kconfig)
+
+    def _find_makefiles(self):
+        """
+        Find all Makefiles and Kbuild files
+        """
+        if self.debug:
+            print('-- Find Makefiles an Kbuild files')
+
+        result = []
+        for path, _dirs, files in os.walk(self.ksource):
+            for f in files:
+                if f in ('Makefile', 'Kbuild'):
+                    result.append(os.path.join(path, f))
+        return result
+
+    def module_to_config(self, module):
+        """
+        Return the config option that enables the provided kernel module
+        """
+        if not self.makefiles:
+            self.makefiles = self._find_makefiles()
+
+        for m in self.makefiles:
+            with open(os.path.join(self.ksource, m)) as fh:
+                for line in read_line(fh):
+                    m = re.match(r'obj-\$\(CONFIG_([^\)]+)\)\s*[+:]?=\s*(.*)',
+                                 line)
+                    if m:
+                        for o in m.group(2).split(' '):
+                            if o in (module + '.o',
+                                     module.replace('_', '-') + '.o',
+                                     module.replace('-', '_') + '.o'):
+                                return m.group(1)
+        return None
 
     def _read_kconfig(self, kconfig):
         """
