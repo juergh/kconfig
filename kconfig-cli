@@ -56,6 +56,11 @@ def do_show_help(kconfig, args):
         config_help = ['No help']
     print('\n'.join(config_help))
 
+@add_help('Show the config option that enables the provided module')
+@add_arg('module', help='Kernel module name')
+def do_show_module_config(kconfig, args):
+    print(kconfig.module_to_config(args.module) or '')
+
 # -----------------------------------------------------------------------------
 # Main entry point
 
