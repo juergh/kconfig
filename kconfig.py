@@ -3,7 +3,6 @@
 # A simple kernel Kconfig parser
 #
 
-import json
 import os
 import re
 
@@ -115,19 +114,22 @@ class Kconfig():
             print('-- Read Kconfig {}'.format(source))
         with open(source) as fh:
             state = 'NONE'
+            config = None
 
             for line in read_line(fh):
                 # Collect any Kconfig sources
                 m = re.match(r'^source\s+"?([^"]+)', line)
                 if m:
-                    state = 'SOURCE'
+                    state = 'NONE'
+                    config = None
                     self._read_kconfig(m.group(1))
                     continue
 
                 # Block boundary
-                if re.match(r'^(comment|choice|endchoice|if|endif|' +
-                            r'endmenu)\b', line):
+                if re.match(r'^(comment|choice|endchoice|if|endif|endmenu)\b',
+                            line):
                     state = 'NONE'
+                    config = None
                     continue
 
                 # Config found
@@ -135,15 +137,15 @@ class Kconfig():
                 if m:
                     state = 'CONFIG'
                     config = m.group(2)
-                    # Add the Kconfig file that references this config option
+                    # Initialize the config data hash
                     if config not in self.configs:
                         self.configs[config] = {
-                            'kconfig': [kconfig],
+                            'kconfig': [],
                             'help': [],
                             'depends': [],
                         }
-                    else:
-                        self.configs[config]['kconfig'].append(kconfig)
+                    # Add the Kconfig file that references this option
+                    self.configs[config]['kconfig'].append(kconfig)
                     continue
 
                 if state == 'CONFIG':
