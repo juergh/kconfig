@@ -4,6 +4,7 @@
 #
 
 import argparse
+import json
 import sys
 
 from kconfig import Kconfig
@@ -60,6 +61,10 @@ def do_show_help(kconfig, args):
 @add_arg('module', help='Kernel module name')
 def do_show_module_config(kconfig, args):
     print(kconfig.module_to_config(args.module) or '')
+
+@add_help('Dump the config data to the screen')
+def do_dump(kconfig, args):
+    print(json.dumps(kconfig.configs, indent=4))
 
 # -----------------------------------------------------------------------------
 # Main entry point
