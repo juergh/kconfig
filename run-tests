@@ -1,0 +1,34 @@
+#!/bin/bash -eu
+#
+# Run basic test
+#
+
+function out()
+{
+	local rc=${?}
+
+	if [ "${rc}" -ne 0 ] ; then
+		echo "FAILED" >&2
+	else
+		echo "PASSED"
+	fi
+}
+
+function run_test()
+{
+	local t=${1}
+
+	echo "-- Run ${t}"
+	./kconfig-cli -s tests/linux "${t}" > .result
+	diff .result tests/data/"${t}"
+}
+
+trap out EXIT INT TERM HUP
+
+tests=(
+	list-config
+)
+
+for t in "${tests[@]}" ; do
+	run_test "${t}"
+done
