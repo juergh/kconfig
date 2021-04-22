@@ -39,10 +39,10 @@ def do_list_config(kconfig, _args):
 
 @add_help('List all config options and show their help texts')
 def do_list_help(kconfig, _args):
-    for config, config_data in kconfig.configs.items():
+    for config in sorted(kconfig.configs.keys()):
         print()
         print(config)
-        config_help = config_data['help']
+        config_help = kconfig.configs[config]['help']
         if not config_help:
             config_help = ['No help']
         print('\n'.join(['  ' + h for h in config_help]))
