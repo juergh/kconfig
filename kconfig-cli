@@ -77,7 +77,7 @@ if __name__ == '__main__':
                         help='Enable debug output')
     parser.add_argument('-s', '--ksource', default='.',
                         help='Path of the kernel source tree (default: ./)')
-    parser.add_argument('-k', '--kconfig', default='Kconfig',
+    parser.add_argument('-c', '--kconfig', default='Kconfig',
                         help='Kconfig filename (default: Kconfig)')
 
     # Add subparsers for the subcommands and walk through the 'do_' functions
