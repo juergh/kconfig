@@ -68,9 +68,10 @@ class Kconfig():
 
         result = []
         for path, _dirs, files in os.walk(self.ksource):
+            rel_path = os.path.relpath(path, self.ksource)
             for f in files:
                 if f in ('Makefile', 'Kbuild'):
-                    result.append(os.path.join(path, f))
+                    result.append(os.path.join(rel_path, f))
         return result
 
     def module_to_config(self, module):
