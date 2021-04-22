@@ -27,6 +27,7 @@ trap out EXIT INT TERM HUP
 
 tests=(
 	list-config
+	list-help
 )
 
 for t in "${tests[@]}" ; do
