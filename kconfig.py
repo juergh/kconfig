@@ -131,7 +131,7 @@ class Kconfig():
                     continue
 
                 # Config found
-                m = re.match(r'^\s*(menu)?config\s+(\S+)\s*$', line)
+                m = re.match(r'^\s*(menu)?config\s+([0-9a-zA-Z_]+)\s*$', line)
                 if m:
                     state = 'CONFIG'
                     config = m.group(2)
