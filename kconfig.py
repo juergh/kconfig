@@ -99,9 +99,6 @@ class Kconfig():
         Read (and parse) the provided kconfig file and recursively traverse all
         included kconfig files as well.
         """
-        if not os.path.exists(kconfig):
-            return
-
         # Prevent reading the same Kconfig multiple times
         if kconfig in self._kconfigs:
             return
