@@ -29,7 +29,7 @@ def read_line(fh):
 
     for line in fh:
         # Strip newlines and such
-        line = line.strip()
+        line = line.rstrip()
 
         # Make sure that lines ending with \ continue
         if cont:
