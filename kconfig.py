@@ -55,6 +55,9 @@ class Kconfig():
         # The list of all makefiles
         self.makefiles = None
 
+        # 'if' conditions
+        self._if = []
+
         # Read and parse the Kconfig tree
         self._kconfigs = {}
         self._read_kconfig(self.kconfig)
@@ -112,22 +115,33 @@ class Kconfig():
             print('-- Read Kconfig {}'.format(source))
         with open(source) as fh:
             state = 'NONE'
-            config = None
 
             for line in read_line(fh):
                 # Collect any Kconfig sources
                 m = re.match(r'^source\s+"?([^"]+)', line)
                 if m:
                     state = 'NONE'
-                    config = None
                     self._read_kconfig(m.group(1))
                     continue
 
                 # Block boundary
-                if re.match(r'^(comment|choice|endchoice|if|endif|endmenu)\b',
+                if re.match(r'^(comment|choice|endchoice|endmenu)\b',
                             line):
                     state = 'NONE'
-                    config = None
+                    continue
+
+                # 'if' statement
+                m = re.match(r'^if\s+(.*\S)\s*$', line)
+                if m:
+                    state = 'NONE'
+                    self._if.append(m.group(1))
+                    continue
+
+                # 'endif' statement
+                m = re.match(r'^endif', line)
+                if m:
+                    state = 'NONE'
+                    self._if.pop()
                     continue
 
                 # Config found
@@ -142,6 +156,7 @@ class Kconfig():
                             'help': [],
                             'depends': [],
                             'selects': [],
+                            'if': self._if.copy(),
                         }
                     # Add the Kconfig file that references this option
                     self.configs[config]['kconfig'].append(kconfig)
