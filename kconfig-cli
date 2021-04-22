@@ -33,6 +33,10 @@ def error(*args, **kwargs):
 # -----------------------------------------------------------------------------
 # Subcommands
 
+@add_help('List all config options')
+def do_list_config(kconfig, _args):
+    print('\n'.join(sorted(kconfig.configs.keys())))
+
 @add_help('List all config options and show their help texts')
 def do_list_help(kconfig, _args):
     for config, config_data in kconfig.configs.items():
