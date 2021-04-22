@@ -1,0 +1,14 @@
+#!/bin/bash -eu
+#
+# Copy the relevant files from a kernel source directory
+#
+
+ksource=${1}
+
+rsync --verbose \
+	  --recursive \
+	  --delete \
+	  --include="*/" --include="Kconfig*" --include="Makefile" --include="Kbuild" \
+	  --exclude="*" \
+	  --prune-empty-dirs \
+	  "${ksource}"/ linux/
