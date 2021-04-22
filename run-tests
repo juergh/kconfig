@@ -19,7 +19,23 @@ function run_test()
 	local t=${1}
 
 	echo "-- Run ${t}"
-	./kconfig-cli -s tests/linux "${t}" > .result
+
+	# Run the tests
+	case "${t}" in
+		show-module-config)
+			# Test a random collection of modules
+			for mod in iwlwifi xt_tcpudp cmac intel_rapl_common \
+			           crct10dif_pclmul rapl wmi_bmof rc_core drm i2c_smbus \
+			           pinctrl_intel ; do
+				./kconfig-cli -s tests/linux show-module-config "${mod}"
+			done
+			;;
+		*)
+			./kconfig-cli -s tests/linux "${t}" > .result
+			;;
+	esac > .result
+
+	# Check the test results
 	diff .result tests/data/"${t}"
 }
 
@@ -28,6 +44,7 @@ trap out EXIT INT TERM HUP
 tests=(
 	list-config
 	list-help
+	show-module-config
 )
 
 for t in "${tests[@]}" ; do
