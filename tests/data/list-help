@@ -1263,7 +1263,6 @@ ADB_IOP
   intelligent support for I/O controllers.  It is described at
   <http://www.angelfire.com/ca2/dev68k/iopdesc.html> to enable direct
   support for it, say 'Y' here.
-  # we want to change this to something like CONFIG_SYSCTRL_CUDA/PMU
 
 ADB_MACII
   Say Y here if want your kernel to support Macintosh systems that use
@@ -2095,7 +2094,6 @@ AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT
   deactivated with the mem_encrypt=off command line option.
   If set to N, then the encryption of system memory can be
   activated with the mem_encrypt=on command line option.
-  # Common NUMA Features
 
 AMD_NB
   No help
@@ -2165,8 +2163,6 @@ AMLOGIC_THERMAL
   for G12 SoC Family.
   This driver can also be built as a module. If so, the module will
   be called amlogic_thermal.
-  menu "Intel thermal drivers"
-  depends on X86 || X86_INTEL_QUARK || COMPILE_TEST
 
 AMX3_PM
   Enable power management on AM335x and AM437x. Required for suspend to mem
@@ -2214,8 +2210,6 @@ APB_TIMER
   systems, unlike the TSC, but it is more expensive to access,
   as it is off-chip. APB timers are always running regardless of CPU
   C states, they are used as per CPU clockevent device when possible.
-  # Mark as expert because too many people got it wrong.
-  # The code disables itself when not needed.
 
 APDS9300
   Say Y here if you want to build a driver for the Avago APDS9300
@@ -2553,10 +2547,6 @@ ARCH_HAS_FORCE_DMA_UNENCRYPTED
 ARCH_HAS_FORTIFY_SOURCE
   An architecture should select this when it can successfully
   build and run with CONFIG_FORTIFY_SOURCE.
-  #
-  # Select if the arch provides a historic keepinit alias for the retain_initrd
-  # command line option
-  #
 
 ARCH_HAS_GCOV_PROFILE_ALL
   No help
@@ -5077,7 +5067,6 @@ AX25_DAMA_SLAVE
   only compiles DAMA slave support into the kernel.  It still needs to
   be enabled at runtime.  For more about DAMA see
   <http://www.linux-ax25.org>.  If unsure, say Y.
-  # placeholder until implemented
 
 AX88796
   AX88796 driver, using platform bus to provide
@@ -5151,7 +5140,6 @@ B43LEGACY
   b43-fwcutter.
   This driver can be built as a module (recommended) that will be
   called "b43legacy". If unsure, say M.
-  # Auto-select SSB PCI-HOST support, if possible
 
 B43LEGACY_DEBUG
   Say Y, because this information will help you get the driver running.
@@ -5235,8 +5223,6 @@ B43_PHY_AC
   This PHY type can be found in the following chipsets:
   PCI: BCM4352, BCM4360
   Say N, this is BROKEN and crashes driver.
-  # This config option automatically enables b43 LEDS support,
-  # if it's possible.
 
 B43_PHY_G
   This PHY type can be found in the following chipsets:
@@ -5274,8 +5260,6 @@ B43_SDIO
   Note that this does not support Broadcom 43xx Full-MAC devices.
   It's safe to select Y here, even if you don't have a B43 SDIO device.
   If unsure, say N.
-  #Data transfers to the device via PIO. We want it as a fallback even
-  # if we can do DMA.
 
 B43_SSB
   No help
@@ -5285,7 +5269,6 @@ B44
   or M here.
   To compile this driver as a module, choose M here. The module
   will be called b44.
-  # Auto-select SSB PCI-HOST support, if possible
 
 B44_PCI
   No help
@@ -5509,8 +5492,6 @@ BALLOON_COMPACTION
   by the guest workload. Allowing the compaction & migration for memory
   pages enlisted as being part of memory balloon devices avoids the
   scenario aforementioned and helps improving memory defragmentation.
-  #
-  # support for memory compaction
 
 BAREUDP
   This adds a bare UDP tunnel module for tunnelling different
@@ -5841,9 +5822,6 @@ BCH_CONST_T
   Constant value for error correction capability in bits 't'.
   Drivers should declare a default value for this symbol if
   they select option BCH_CONST_PARAMS.
-  #
-  # Textsearch support is select'ed if needed
-  #
 
 BCM2711_THERMAL
   Support for thermal sensors on Broadcom BCM2711 SoCs.
@@ -6291,7 +6269,6 @@ BINFMT_MISC
 
 BINFMT_SCRIPT
   Say Y here if you want to execute interpreted scripts starting with
-  #! followed by the path to an interpreter.
   You can build this support as a module; however, until that module
   gets loaded, you cannot run scripts.  Thus, if you want to load this
   module from an initramfs, the portion of the initramfs before loading
@@ -6913,7 +6890,6 @@ BLK_DEV_OPTI621
 BLK_DEV_PALMCHIP_BK3710
   Say Y here if you want to support the onchip IDE controller on the
   TI DaVinci SoC
-  # no isa -> no vlb
 
 BLK_DEV_PCIESSD_MTIP32XX
   This enables the block driver for Micron PCIe SSDs.
@@ -7199,7 +7175,6 @@ BLK_INLINE_ENCRYPTION_FALLBACK
   Enabling this lets the block layer handle inline encryption
   by falling back to the kernel crypto API when inline
   encryption hardware is not present.
-  menu "Partition Types"
 
 BLK_MQ_PCI
   No help
@@ -7839,9 +7814,6 @@ BRIDGE_EBT_SNAT
   This option adds the MAC SNAT target, which allows altering the MAC
   source address of frames.
   To compile it as a module, choose M here.  If unsure, say N.
-  #
-  # watchers
-  #
 
 BRIDGE_EBT_STP
   This option adds the Spanning Tree Protocol match, which
@@ -7859,17 +7831,11 @@ BRIDGE_EBT_T_NAT
   source address (MAC SNAT) or the MAC destination address (MAC DNAT).
   See the man page for ebtables(8).
   To compile it as a module, choose M here.  If unsure, say N.
-  #
-  # matches
-  #
 
 BRIDGE_EBT_VLAN
   This option adds the 802.1Q vlan match, which allows the filtering of
   802.1Q vlan fields.
   To compile it as a module, choose M here.  If unsure, say N.
-  #
-  # targets
-  #
 
 BRIDGE_IGMP_SNOOPING
   If you say Y here, then the Ethernet bridge will be able selectively
@@ -9145,7 +9111,6 @@ CC_HAS_SANCOV_TRACE_PC
 CC_HAS_SANE_STACKPROTECTOR
   We have to make sure stack protector is unconditionally disabled if
   the compiler produces broken code.
-  menu "Processor type and features"
 
 CC_HAS_TSAN_COMPOUND_READ_BEFORE_WRITE
   No help
@@ -10483,7 +10448,6 @@ CLK_RCAR_GEN3_CPG
 
 CLK_RCAR_USB2_CLOCK_SEL
   This is a driver for R-Car USB2 clock selector
-  # Generic
 
 CLK_RENESAS
   No help
@@ -12130,8 +12094,6 @@ COMPACTION
   disable this option unless there really is a strong reason for
   it and then we would be really interested to hear about that at
   linux-mm@kvack.org.
-  #
-  # support for free page reporting
 
 COMPAL_LAPTOP
   This is a driver for laptops built by Compal, and some models by
@@ -12329,9 +12291,6 @@ COSA
   details about the cards and the driver itself.
   The driver will be compiled as a module: the
   module will be called cosa.
-  #
-  # Lan Media's board. Currently 1000, 1200, 5200, 5245
-  #
 
 COUNTER
   This enables counter device support through the Generic Counter
@@ -15007,11 +14966,6 @@ DCDBAS
   use of this driver.
   Say Y or M here to enable the driver for use by Dell systems
   management software such as Dell OpenManage.
-  #
-  # The DELL_SMBIOS driver depends on ACPI_WMI and/or DCDBAS if those
-  # backends are selected. The "depends" line prevents a configuration
-  # where DELL_SMBIOS=y while either of those dependencies =m.
-  #
 
 DCSSBLK
   Support for dcss block device
@@ -15120,11 +15074,6 @@ DEBUG_FORCE_FUNCTION_ALIGN_32B
   verify if the bump is caused by function alignment changes, while
   it will slightly increase the kernel size and affect icache usage.
   It is mainly for debug and performance tuning use.
-  #
-  # Select this config option from the architecture Kconfig, if it
-  # is preferred to always offer frame pointers as a config
-  # option on the architecture (regardless of KERNEL_DEBUG):
-  #
 
 DEBUG_FORCE_WEAK_PER_CPU
   s390 and alpha require percpu variables in modules to be
@@ -15351,7 +15300,6 @@ DEBUG_MEMORY_INIT
 DEBUG_MISC
   Say Y here if you need to enable miscellaneous debug code that should
   be under a more specific debug option but isn't.
-  menu "Memory Debugging"
 
 DEBUG_MUTEXES
   This feature allows mutex semantics violations to be detected and
@@ -15470,7 +15418,6 @@ DEBUG_PREEMPT
   commonly used smp_processor_id() function and will print warnings
   if kernel code uses it in a preemption-unsafe way. Also, the kernel
   will detect preemption count underflows.
-  menu "Lock Debugging (spinlocks, mutexes, etc...)"
 
 DEBUG_RODATA_TEST
   This option enables a testcase for the setting rodata read-only.
@@ -15517,7 +15464,6 @@ DEBUG_SHIRQ
   interrupt handler is deregistered (generating one when registering
   is currently disabled). Drivers need to handle this correctly. Some
   don't and need to be caught.
-  menu "Debug Oops, Lockups and Hangs"
 
 DEBUG_SLAB
   Say Y here to have the kernel do limited verification on memory
@@ -15740,10 +15686,6 @@ DEFAULT_HOSTNAME
   calls sethostname(2). The kernel traditionally uses "(none)" here,
   but you may wish to use a different default here to make a minimal
   system more usable with less configuration.
-  #
-  # For some reason microblaze and nios2 hard code SWAP=n.  Hopefully we can
-  # add proper SWAP support to them, in which case this can be remove.
-  #
 
 DEFAULT_HTCP
   No help
@@ -16108,7 +16050,6 @@ DIAG288_WATCHDOG
   both.
   To compile this driver as a module, choose M here. The module
   will be called diag288_wdt.
-  # SUPERH (sh + sh64) Architecture
 
 DIGICOLOR_TIMER
   Enables the support for the digicolor timer driver.
@@ -16123,9 +16064,6 @@ DIMLIB
   Dynamic Interrupt Moderation library.
   Implements an algorithm for dynamically changing CQ moderation values
   according to run time performance.
-  #
-  # libfdt files, only selected if needed.
-  #
 
 DISCONTIGMEM
   No help
@@ -17335,9 +17273,6 @@ DRM_I915_GVT
 DRM_I915_GVT_KVMGT
   Choose this option if you want to enable KVMGT support for
   Intel GVT-g.
-  menu "drm/i915 Debugging"
-  depends on DRM_I915
-  depends on EXPERT
 
 DRM_I915_LOW_LEVEL_TRACEPOINTS
   Choose this option to turn on low level request tracing events.
@@ -17628,8 +17563,6 @@ DRM_OMAP_PANEL_DSI_CM
 
 DRM_PANEL
   Panel registration and lookup framework.
-  menu "Display Panels"
-  depends on DRM && DRM_PANEL
 
 DRM_PANEL_ABT_Y030XX067A
   Say Y here to enable support for the Asia Better Technology Ltd.
@@ -17658,8 +17591,6 @@ DRM_PANEL_BOE_TV101WUM_NL6
 
 DRM_PANEL_BRIDGE
   DRM bridge wrapper of DRM panels
-  menu "Display Interface Bridges"
-  depends on DRM && DRM_BRIDGE
 
 DRM_PANEL_ELIDA_KD35T133
   Say Y here if you want to enable support for the Elida
@@ -19386,7 +19317,6 @@ DYNAMIC_DEBUG
   format : the format used for the debug statement
   From a live system:
   nullarbor:~ # cat <debugfs>/dynamic_debug/control
-  # filename:lineno [module]function flags format
   fs/aio.c:222 [aio]__put_ioctx =_ "__put_ioctx:\040freeing\040%p\012"
   fs/aio.c:248 [aio]ioctx_alloc =_ "ENOMEM:\040nr_events\040too\040high\012"
   fs/aio.c:1770 [aio]sys_io_cancel =_ "calling\040cancel\012"
@@ -20235,8 +20165,6 @@ EISA_PCI_EISA
   bridge. If your system have both PCI and EISA slots, you
   certainly need this option.
   When in doubt, say Y.
-  # Using EISA_VIRTUAL_ROOT on something other than an Alpha or
-  # an X86 may lead to crashes...
 
 EISA_VIRTUAL_ROOT
   Activate this option if your system only have EISA bus
@@ -20842,7 +20770,6 @@ EXYNOS_CLKOUT
   variants. Usually the XCLKOUT is used to monitor the status of the
   certains clocks from SoC, but it could also be tied to other devices
   as an input clock.
-  # For S3C24XX platforms, select following symbols:
 
 EXYNOS_IOMMU
   Support for the IOMMU (System MMU) of Samsung Exynos application
@@ -22766,12 +22693,6 @@ FORCE_DYNAMIC_FTRACE
   generic code, as other architectures still use it. But we
   only need to keep it around for x86_64. No need to keep it
   for x86_32. For x86_32, force DYNAMIC_FTRACE.
-  #
-  # Arch settings
-  #
-  # ( Note that options that are marked 'if X86_64' could in principle be
-  #   ported to 32-bit as well. )
-  #
 
 FORCE_PCI
   No help
@@ -23162,7 +23083,6 @@ FSL_PAMU
   Freescale PAMU support. PAMU is the IOMMU present on Freescale QorIQ platforms.
   PAMU can authorize memory access, remap the memory address, and remap I/O
   transaction types.
-  # MSM IOMMU support
 
 FSL_PQ_MDIO
   This driver supports the MDIO bus used by the gianfar and UCC drivers.
@@ -23238,8 +23158,6 @@ FS_ENCRYPTION
   efficient since it avoids caching the encrypted and
   decrypted pages in the page cache.  Currently Ext4,
   F2FS and UBIFS make use of this feature.
-  # Filesystems supporting encryption must select this if FS_ENCRYPTION.  This
-  # allows the algorithms to be built as modules when all the filesystems are.
 
 FS_ENCRYPTION_ALGS
   No help
@@ -23858,7 +23776,6 @@ GCC_PLUGIN_STRUCTLEAK
   information at:
   * https://grsecurity.net/
   * https://pax.grsecurity.net/
-  menu "Memory initialization"
 
 GCC_PLUGIN_STRUCTLEAK_BYREF
   Zero-initialize any structures on the stack that may
@@ -23974,8 +23891,6 @@ GENERIC_ADC_THERMAL
   is read via IIO framework and the channel information is provided
   to this driver. This driver reports the temperature by reading ADC
   channel and converts it to temperature based on lookup table.
-  menu "Qualcomm thermal drivers"
-  depends on (ARCH_QCOM && OF) || COMPILE_TEST
 
 GENERIC_ALLOCATOR
   No help
@@ -24256,9 +24171,6 @@ GLOB_SELFTEST
   It only adds a little bit of code and slows kernel boot (or
   module load) by a small amount, so you're welcome to play with
   it, but you probably don't need it.
-  #
-  # Netlink attribute parsing support is select'ed if needed
-  #
 
 GNSS
   Say Y here if you have a GNSS receiver (e.g. a GPS receiver).
@@ -25601,12 +25513,6 @@ HAVE_ARCH_COMPAT_MMAP_BASES
   This allows 64bit applications to invoke 32-bit mmap() syscall
   and vice-versa 32-bit applications to call 64-bit mmap().
   Required for applications doing different bitness syscalls.
-  # This allows to use a set of generic functions to determine mmap base
-  # address by giving priority to top-down scheme only if the process
-  # is not in legacy mode (compat task, unlimited stack size or
-  # sysctl_legacy_va_layout).
-  # Architecture that selects this option can provide its own version of:
-  # - STACK_RND_MASK
 
 HAVE_ARCH_COMPILER_H
   An architecture can select this if it provides an
@@ -25718,7 +25624,6 @@ HAVE_ARCH_THREAD_STRUCT_WHITELIST
   FPU registers. Specifically, arch_thread_struct_whitelist()
   should be implemented. Without this, the entire thread_struct
   field in task_struct will be left whitelisted.
-  # Select if arch has its private alloc_thread_stack() function
 
 HAVE_ARCH_TRACEHOOK
   No help
@@ -26572,8 +26477,6 @@ HID_GENERIC
   To compile this driver as a module, choose M here: the module
   will be called hid-generic.
   If unsure, say Y.
-  menu "Special HID drivers"
-  depends on HID
 
 HID_GFRM
   Support for Google Fiber TV Box remote controls
@@ -27327,7 +27230,6 @@ HOSTESS_SV11
   256Kbps, supporting PPP and Cisco HDLC.
   The driver will be compiled as a module: the
   module will be called hostess_sv11.
-  # The COSA/SRP driver has not been tested as non-modular yet.
 
 HOTPLUG_CPU
   No help
@@ -29293,8 +29195,6 @@ I40E_DCB
   Say Y here if you want to use Data Center Bridging (DCB) in the
   driver.
   If unsure, say N.
-  # this is here to allow seamless migration from I40EVF --> IAVF name
-  # so that CONFIG_IAVF symbol will always mirror the state of CONFIG_I40EVF
 
 I6300ESB_WDT
   Hardware driver for the watchdog timer built into the Intel
@@ -29528,7 +29428,6 @@ IDEPCI_PCIBUS_ORDER
   IDE devices is unreliable and use other means for achieving
   it (i.e. udev).
   If in doubt, say N.
-  # TODO: split it on per host driver config options (or module parameters)
 
 IDE_ATAPI
   No help
@@ -31786,8 +31685,6 @@ INTEL_IDXD
   in Intel Xeon CPU.
   Say Y if you have such a platform.
   If unsure, say N.
-  # Config symbol that collects all the dependencies that's necessary to
-  # support shared virtual memory for the devices supported by idxd.
 
 INTEL_IDXD_SVM
   No help
@@ -32050,7 +31947,6 @@ INTEL_QUARK_DTS_THERMAL
   The DTS will be registered as a thermal zone. There are two trip points:
   hot & critical. The critical trip point default value is set by
   underlying BIOS/Firmware.
-  menu "ACPI INT340X thermal drivers"
 
 INTEL_RAPL
   This enables support for the Intel Running Average Power Limit (RAPL)
@@ -32583,7 +32479,6 @@ IO_STRICT_DEVMEM
   may break traditional users of /dev/mem (dosemu, legacy X, etc...)
   if the driver using a given range cannot be disabled.
   If in doubt, say Y.
-  menu "$(SRCARCH) Debugging"
 
 IO_URING
   This option enables support for the io_uring interface, enabling
@@ -32661,7 +32556,6 @@ IP6_NF_MATCH_SRH
   srh matching allows you to match packets based on the segment
   routing header of the packet.
   To compile it as a module, choose M here.  If unsure, say N.
-  # The targets
 
 IP6_NF_NAT
   This enables the `nat' table in ip6tables. This allows masquerading,
@@ -32675,7 +32569,6 @@ IP6_NF_RAW
   and OUTPUT chains.
   If you want to compile it as a module, say M here and read
   <file:Documentation/kbuild/modules.rst>.  If unsure, say `N'.
-  # security table for MAC policy
 
 IP6_NF_SECURITY
   This option adds a `security' table to iptables, for use
@@ -33309,7 +33202,6 @@ IP_NF_MATCH_TTL
   This is a backwards-compat option for the user's convenience
   (e.g. when running oldconfig). It selects
   CONFIG_NETFILTER_XT_MATCH_HL.
-  # `filter', generic and specific targets
 
 IP_NF_NAT
   This enables the `nat' table in iptables. This allows masquerading,
@@ -33323,7 +33215,6 @@ IP_NF_RAW
   and OUTPUT chains.
   If you want to compile it as a module, say M here and read
   <file:Documentation/kbuild/modules.rst>.  If unsure, say `N'.
-  # security table for MAC policy
 
 IP_NF_SECURITY
   This option adds a `security' table to iptables, for use
@@ -33371,13 +33262,11 @@ IP_NF_TARGET_SYNPROXY
   server. This allows to avoid conntrack and server resource usage
   during SYN-flood attacks.
   To compile it as a module, choose M here. If unsure, say N.
-  # NAT + specific targets: nf_conntrack
 
 IP_NF_TARGET_TTL
   This is a backwards-compatible option for the user's convenience
   (e.g. when running oldconfig). It selects
   CONFIG_NETFILTER_XT_TARGET_HL.
-  # raw + specific targets
 
 IP_PIMSM_V1
   Kernel side support for Sparse Mode PIM (Protocol Independent
@@ -33880,7 +33769,6 @@ IRQ_REMAP
   Supports Interrupt remapping for IO-APIC and MSI devices.
   To use x2apic mode in the CPU's which support x2APIC enhancements or
   to support platforms with CPU's having > 8 bit APIC ID, say Y.
-  # OMAP IOMMU support
 
 IRQ_SIM
   No help
@@ -34193,7 +34081,6 @@ ISA_BUS
   architectures -- if your target machine is modern, it probably does
   not have an ISA bus.
   If unsure, say N.
-  # x86_64 have no ISA slots, but can have ISA-style DMA.
 
 ISA_BUS_API
   No help
@@ -34393,8 +34280,6 @@ IWL3945
   inserted in and removed from the running kernel whenever you want),
   say M here and read <file:Documentation/kbuild/modules.rst>.  The
   module will be called iwl3945.
-  menu "iwl3945 / iwl4965 Debugging Options"
-  depends on IWLEGACY
 
 IWL4965
   This option enables support for
@@ -34446,7 +34331,6 @@ IWLMVM
   This is the driver that supports the MVM firmware. The list
   of the devices that use this firmware is available here:
   https://wireless.wiki.kernel.org/en/users/drivers/iwlwifi#firmware
-  # don't call it _MODULE -- will confuse Kconfig/fixdep/...
 
 IWLWIFI
   Select to build the driver supporting the:
@@ -34487,7 +34371,6 @@ IWLWIFI_BCAST_FILTERING
   patterns (e.g. incoming arp requests).
   If unsure, don't enable this option, as some programs might
   expect incoming broadcasts for their normal operations.
-  menu "Debugging Options"
 
 IWLWIFI_DEBUG
   This option will enable debug tracing output for the iwlwifi drivers
@@ -34586,7 +34469,6 @@ IXP4XX_ETH
 IXP4XX_HSS
   Say Y here if you want to use built-in HSS ports
   on IXP4xx processor.
-  # X.25 network drivers
 
 IXP4XX_IRQ
   No help
@@ -35122,8 +35004,6 @@ KALLSYMS_BASE_RELATIVE
   but more importantly, it results in entries whose values are build
   time constants, and no relocation pass is required at runtime to fix
   up the entries based on the runtime load address of the kernel.
-  # end of the "standard kernel features (expert users)" menu
-  # syscall, maps, verifier
 
 KARMA_PARTITION
   Say Y here if you would like to mount the Rio Karma MP3 player, as it
@@ -35321,13 +35201,6 @@ KCSAN_REPORT_ONCE_IN_MS
   smaller than the duration defined here. This allows rate limiting
   reporting to avoid flooding the console with reports.  Setting this
   to 0 disables rate limiting.
-  # The main purpose of the below options is to control reported data races (e.g.
-  # in fuzzer configs), and are not expected to be switched frequently by other
-  # users. We could turn some of them into boot parameters, but given they should
-  # not be switched normally, let's keep them here to simplify configuration.
-  #
-  # The defaults below are chosen to be very conservative, and may miss certain
-  # bugs.
 
 KCSAN_REPORT_RACE_UNKNOWN_ORIGIN
   If KCSAN should report races where only one access is known, and the
@@ -36503,7 +36376,6 @@ LANMEDIA
   It is available at <ftp://ftp.lanmedia.com/> (broken link).
   To compile this driver as a module, choose M here: the
   module will be called lmc.
-  # There is no way to detect a Sealevel board. Force it modular
 
 LANTIQ_ETOP
   Support for the MII0 inside the Lantiq SoC
@@ -37625,7 +37497,6 @@ LOCK_EVENT_COUNTS
   in the system with minimal performance impact. This reduces
   the chance of application behavior change because of timing
   differences. The counts are reported via debugfs.
-  # Select if the architecture has support for applying RELR relocations.
 
 LOCK_SPIN_ON_OWNER
   No help
@@ -37962,8 +37833,6 @@ M486SX
 M54xx_WATCHDOG
   To compile this driver as a module, choose M here: the
   module will be called m54xx_wdt.
-  # MicroBlaze Architecture
-  # MIPS Architecture
 
 M586
   Select this for an 586 or 686 series processor such as the AMD K5,
@@ -38527,19 +38396,6 @@ MAXIM_THERMOCOUPLE
 MAXSMP
   Enable maximum number of CPUS and NUMA Nodes for this architecture.
   If unsure, say N.
-  #
-  # The maximum number of CPUs supported:
-  #
-  # The main config value is NR_CPUS, which defaults to NR_CPUS_DEFAULT,
-  # and which can be configured interactively in the
-  # [NR_CPUS_RANGE_BEGIN ... NR_CPUS_RANGE_END] range.
-  #
-  # The ranges are different on 32-bit and 64-bit kernels, depending on
-  # hardware capabilities and scalability features of the kernel.
-  #
-  # ( If MAXSMP is enabled we just use the highest possible value and disable
-  #   interactive configuration. )
-  #
 
 MAX_RAW_DEVS
   The maximum number of RAW devices that are supported.
@@ -39008,10 +38864,6 @@ MEDIA_CONTROLLER
   Enable the media controller API used to query media devices internal
   topology and configure it dynamically.
   This API is mostly used by camera interfaces in embedded platforms.
-  #
-  # DVB Core
-  #	Only enables if one of DTV is selected
-  #
 
 MEDIA_CONTROLLER_DVB
   Enable the media controller API support for DVB.
@@ -39069,10 +38921,6 @@ MEDIA_SUBDRV_AUTOSELECT
   functionality for your device (it may not tune or may not have
   the needed demodulators).
   If unsure say Y.
-  menu "Media device types"
-  #
-  # Multimedia support - automatically enable V4L2 and DVB core
-  #
 
 MEDIA_SUPPORT
   If you want to use media devices, including Webcams, Video grabber
@@ -39368,9 +39216,6 @@ MEMORY_NOTIFIER_ERROR_INJECT
   If the notifier call chain should be failed with some events
   notified, write the error code to "actions/<notifier event>/error".
   Example: Inject memory hotplug offline error (-12 == -ENOMEM)
-  # cd /sys/kernel/debug/notifier-error-inject/memory
-  # echo -12 > actions/MEM_GOING_OFFLINE/error
-  # echo offline > /sys/devices/system/memory/memoryXXX/state
   bash: echo: write error: Cannot allocate memory
   To compile this code as a module, choose M here: the module will
   be called memory-notifier-error-inject.
@@ -39471,7 +39316,6 @@ MEN_A21_WDT
   The driver can also be built as a module. If so, the module will be
   called mena21_wdt.
   If unsure select N here.
-  # PPC64 Architecture
 
 MEN_Z188_ADC
   Say yes here to enable support for the MEN 16z188 ADC IP-Core on a MCB
@@ -39816,7 +39660,6 @@ MFD_HI6421_SPMI
   individual components like voltage regulators under corresponding
   menus in order to enable them.
   We communicate with the Hi6421v600 via a SPMI bus.
-  # to be placed at drivers/regulator
 
 MFD_HI655X_PMIC
   Select this option to enable Hisilicon hi655x series pmic driver.
@@ -39903,8 +39746,6 @@ MFD_KHADAS_MCU
   This driver provides common support for accessing the device,
   additional drivers must be enabled in order to use the functionality
   of the device.
-  menu "Multimedia Capabilities Port drivers"
-  depends on ARCH_SA1100
 
 MFD_LM3533
   Say yes here to enable support for National Semiconductor / TI
@@ -40269,8 +40110,6 @@ MFD_STMPE
   Keypad: stmpe-keypad
   Touchscreen: stmpe-ts
   ADC: stmpe-adc
-  menu "STMicroelectronics STMPE Interface Drivers"
-  depends on MFD_STMPE
 
 MFD_STPMIC1
   Support for ST Microelectronics STPMIC1 PMIC. STPMIC1 has power on
@@ -43059,7 +42898,6 @@ MTD_ICHXROM
 MTD_IMPA7
   This enables access to the NOR Flash on the impA7 board of
   implementa GmbH. If you have such a board, say 'Y' here.
-  # This needs CFI or JEDEC, depending on the cards found.
 
 MTD_INTEL_VR_NOR
   Map driver for a NOR flash bank located on the Expansion Bus of the
@@ -43927,7 +43765,6 @@ MTD_TESTS
   various checks and verifications when loaded.
   WARNING: some of the tests will ERASE entire MTD device which they
   test. Do not use these tests unless you really know what you do.
-  menu "Partition parsers"
 
 MTD_TS5500
   This provides a driver for the on-board flash of the Technologic
@@ -44593,8 +44430,6 @@ NETDEVICES
   See also "The Linux Network Administrator's Guide" by Olaf Kirch and
   Terry Dawson. Available at <http://www.tldp.org/guides.html>.
   If unsure, say Y.
-  # All the following symbols are dependent on NETDEVICES - do not repeat
-  # that for each of the symbols.
 
 NETDEVSIM
   This driver is a developer testing tool and software model that can
@@ -44610,9 +44445,6 @@ NETDEV_NOTIFIER_ERROR_INJECT
   If the notifier call chain should be failed with some events
   notified, write the error code to "actions/<notifier event>/error".
   Example: Inject netdevice mtu change error (-22 = -EINVAL)
-  # cd /sys/kernel/debug/notifier-error-inject/netdev
-  # echo -22 > actions/NETDEV_CHANGEMTU/error
-  # ip link set eth0 mtu 1024
   RTNETLINK answers: Invalid argument
   To compile this code as a module, choose M here: the module will
   be called netdev-notifier-error-inject.
@@ -45020,7 +44852,6 @@ NETFILTER_XT_SET
   Using this target and match, you can add/delete and match
   elements in the sets created by ipset(8).
   To compile it as a module, choose M here.  If unsure, say N.
-  # alphabetically ordered list of targets
 
 NETFILTER_XT_TARGET_AUDIT
   This option adds a 'AUDIT' target, which can be used to create
@@ -45188,7 +45019,6 @@ NETFILTER_XT_TARGET_TCPMSS
 NETFILTER_XT_TARGET_TCPOPTSTRIP
   This option adds a "TCPOPTSTRIP" target, which allows you to strip
   TCP options from TCP packets.
-  # alphabetically ordered list of matches
 
 NETFILTER_XT_TARGET_TEE
   This option adds a "TEE" target with which a packet can be cloned and
@@ -45840,7 +45670,6 @@ NET_FLOW_LIMIT
   maintain capacity for the other flows. This feature provides servers
   with many clients some protection against DoS by a single (spoofed)
   flow that greatly exceeds average workload.
-  menu "Network testing"
 
 NET_FOU
   Foo over UDP allows any IP protocol to be directly encapsulated
@@ -47947,7 +47776,6 @@ NIC7018_WDT
   Support for National Instruments NIC7018 Watchdog.
   To compile this driver as a module, choose M here: the module will be
   called nic7018_wdt.
-  # M68K Architecture
 
 NILFS2_FS
   NILFS2 is a log-structured file system (LFS) supporting continuous
@@ -49998,9 +49826,6 @@ PAGE_REPORTING
   free pages from the buddy allocator for the purpose of reporting
   those pages to another entity, such as a hypervisor, so that the
   memory can be freed within the host for other uses.
-  #
-  # support for page migration
-  #
 
 PAGE_TABLE_ISOLATION
   This feature reduces the number of hardware side channels by
@@ -50407,7 +50232,6 @@ PARIDE_ON26
   should answer M to build it as a loadable module. The module will be
   called on26. You must also have a high-level driver for the type
   of device that you want to support.
-  #
 
 PARIDE_PCD
   This option enables the high-level driver for ATAPI CD-ROM devices
@@ -50953,7 +50777,6 @@ PC104
   Expose PC/104 form factor device drivers and options available for
   selection and configuration. Enable this option if your target
   machine has a PC/104 bus.
-  menu "Kernel Performance Events And Counters"
 
 PC300TOO
   Alternative driver for PC300 RSV/X21 PCI cards made by
@@ -51085,9 +50908,6 @@ PCIEAER_INJECT
   help of a user space helper tool aer-inject, which can be
   gotten from:
   https://www.kernel.org/pub/linux/utils/pci/aer-inject/
-  #
-  # PCI Express ECRC
-  #
 
 PCIEASPM
   This enables OS control over PCI Express ASPM (Active State
@@ -51119,9 +50939,6 @@ PCIEPORTBUS
   This enables PCI Express Port Bus support. Users can then enable
   support for Native Hot-Plug, Advanced Error Reporting, Power
   Management Events, and Downstream Port Containment.
-  #
-  # Include service Kconfig here
-  #
 
 PCIE_AL
   Say Y here to enable support of the Amazon's Annapurna Labs PCIe
@@ -51254,9 +51071,6 @@ PCIE_ECRC
   Used to override firmware/bios settings for PCI Express ECRC
   (transaction layer end-to-end CRC checking).
   When in doubt, say N.
-  #
-  # PCI Express ASPM
-  #
 
 PCIE_EDR
   This option adds Error Disconnect Recover support as specified
@@ -52280,7 +52094,6 @@ PHY_HI3660_USB
 PHY_HI3670_USB
   Enable this to support the HISILICON HI3670 USB PHY.
   To compile this driver as a module, choose M here.
-  # to be placed at drivers/spmi
 
 PHY_HI6220_USB
   Enable this to support the HISILICON HI6220 USB PHY.
@@ -52699,8 +52512,6 @@ PIC32_DMT
   and sequencing must be detected.
   To compile this driver as a loadable module, choose M here.
   The module will be called pic32-dmt.
-  # PARISC Architecture
-  # POWERPC Architecture
 
 PIC32_EVIC
   No help
@@ -53110,7 +52921,6 @@ PINCTRL_LEWISBURG
 PINCTRL_LOCHNAGAR
   This driver supports configuring the GPIO and other pin configuration
   of the Cirrus Logic Lochnagar audio development board.
-  # This is all selected by the Madera MFD driver Kconfig options
 
 PINCTRL_LPASS_LPI
   This is the pinctrl, pinmux, pinconf and gpiolib driver for the
@@ -54139,9 +53949,6 @@ PM_NOTIFIER_ERROR_INJECT
   If the notifier call chain should be failed with some events
   notified, write the error code to "actions/<notifier event>/error".
   Example: Inject PM suspend error (-12 = -ENOMEM)
-  # cd /sys/kernel/debug/notifier-error-inject/pm/
-  # echo -12 > actions/PM_SUSPEND_PREPARE/error
-  # echo mem > /sys/power/state
   bash: echo: write error: Cannot allocate memory
   To compile this code as a module, choose M here: the module will
   be called pm-notifier-error-inject.
@@ -54734,12 +54541,6 @@ PREEMPTIRQ_DELAY_TEST
 PREEMPTIRQ_TRACEPOINTS
   Create preempt/irq toggle tracepoints if needed, so that other parts
   of the kernel can use them to generate or add hooks to them.
-  # All tracer options should select GENERIC_TRACER. For those options that are
-  # enabled by all tracers (context switch and event tracer) they select TRACING.
-  # This allows those options to appear when no other tracer is selected. But the
-  # options do not appear when something else selects it. We need the two options
-  # GENERIC_TRACER and TRACING to avoid circular dependencies to accomplish the
-  # hiding of the automatic options.
 
 PREEMPT_COUNT
   No help
@@ -54891,9 +54692,6 @@ PRINTK_SAFE_LOG_BUF_SHIFT
   14 =>  16 KB for each CPU
   13 =>   8 KB for each CPU
   12 =>   4 KB for each CPU
-  #
-  # Architectures with an unreliable sched_clock() should select this:
-  #
 
 PRINTK_TIME
   Selecting this option causes time stamps of the printk()
@@ -55036,10 +54834,6 @@ PROFILE_ANNOTATED_BRANCHES
 PROFILING
   Say Y here to enable the extended profiling support mechanisms used
   by profilers such as OProfile.
-  #
-  # Place an empty function call at each tracepoint site. Can be
-  # dynamically changed for a probe function.
-  #
 
 PROVE_LOCKING
   This feature enables the kernel to prove that all locking
@@ -56421,7 +56215,6 @@ QUOTACTL
 QUOTA_DEBUG
   If you say Y here, quota subsystem will perform some additional
   sanity checks of quota internal structures. If unsure, say N.
-  # Generic support for tree structured quota files. Selected when needed.
 
 QUOTA_NETLINK_INTERFACE
   If you say Y here, quota warnings (about exceeding softlimit, reaching
@@ -56702,7 +56495,6 @@ RADIO_WL1273
   <file:Documentation/userspace-api/media/index.rst>.
   To compile this driver as a module, choose M here: the
   module will be called radio-wl1273.
-  # TI's ST based wl128x FM radio
 
 RADIO_WL128X
   Choose Y here if you have this FM radio chip.
@@ -56739,9 +56531,6 @@ RALINK_WDT
 RANDOM32_SELFTEST
   This option enables the 32 bit PRNG library functions to perform a
   self test on initialization.
-  #
-  # compression support is select'ed if needed
-  #
 
 RANDOMIZE_BASE
   In support of Kernel Address Space Layout Randomization (KASLR),
@@ -56769,7 +56558,6 @@ RANDOMIZE_BASE
   theoretically possible, but the implementations are further
   limited due to memory layouts.
   If unsure, say Y.
-  # Relocation on x86 needs some additional build support
 
 RANDOMIZE_MEMORY
   Randomizes the base virtual address of kernel memory sections
@@ -56857,8 +56645,6 @@ RAPIDIO_MPORT_CDEV
   This option includes generic RapidIO mport device driver which
   allows to user space applications to perform RapidIO-specific
   operations through selected RapidIO mport.
-  menu "RapidIO Switch drivers"
-  depends on RAPIDIO
 
 RAPIDIO_RXS_GEN3
   Includes support for ITD RXS Gen.3 serial RapidIO switches.
@@ -58484,7 +58270,6 @@ RFKILL
   found on many WiFi and Bluetooth cards.
   To compile this driver as a module, choose M here: the
   module will be called rfkill.
-  # LED trigger support
 
 RFKILL_GPIO
   If you say yes here you get support of a generic gpio RFKILL
@@ -58834,9 +58619,6 @@ ROMFS_FS
   module.
   If you don't know whether you need it, then you don't need it:
   answer N.
-  #
-  # Select the backing stores to be supported
-  #
 
 ROMFS_ON_BLOCK
   No help
@@ -58864,8 +58646,6 @@ ROSE
   <https://www.tapr.org/>.
   To compile this driver as a module, choose M here: the
   module will be called rose.
-  menu "AX.25 network device drivers"
-  depends on HAMRADIO && AX25
 
 RPCIF_HYPERBUS
   This option includes Renesas RPC-IF HyperBus support.
@@ -60316,7 +60096,6 @@ RTL8187
   (v1 = rt73usb; v3 is rt2070-based,
   use staging/rt3070 or try rt2800usb)
   Thanks to Realtek for their support!
-  # If possible, automatically enable LEDs for RTL8187.
 
 RTL8187_LEDS
   No help
@@ -61984,8 +61763,6 @@ SCSI_SCAN_ASYNC
   or async on the kernel's command line.
   Note that this setting also affects whether resuming from
   system suspend will be performed asynchronously.
-  menu "SCSI Transports"
-  depends on SCSI
 
 SCSI_SIM710
   This driver is for NCR53c710 based SCSI host adapters.
@@ -62372,7 +62149,6 @@ SEALEVEL_4021
   This is a driver for the Sealevel Systems ACB 56 serial I/O adapter.
   The driver will be compiled as a module: the
   module will be called sealevel.
-  # Generic HDLC
 
 SECCOMP
   This kernel feature is useful for number crunching applications
@@ -64557,9 +64333,6 @@ SERIAL_8250_HUB6
   Say Y here if you have a HUB6 serial board.
   To compile this driver as a module, choose M here: the module
   will be called 8250_hub6.
-  #
-  # Misc. options/drivers.
-  #
 
 SERIAL_8250_INGENIC
   If you have a system using an Ingenic SoC and wish to make use of
@@ -64591,9 +64364,6 @@ SERIAL_8250_MANY_PORTS
   hardware. If you only use the standard COM 1/2/3/4 ports, you can
   say N here to save some memory. You can also say Y if you have an
   "intelligent" multiport card such as Cyclades, Digiboards, etc.
-  #
-  # Multi-port serial cards
-  #
 
 SERIAL_8250_MEN_MCB
   This enables support for FPGA based UARTs found on many MEN
@@ -65846,9 +65616,6 @@ SG_POOL
   Provides a helper to allocate chained scatterlists. This should be
   selected by a driver or an API which whishes to allocate chained
   scatterlist.
-  #
-  # sg chaining option
-  #
 
 SG_SPLIT
   Provides a helper to split scatterlists into chunks, each chunk being
@@ -65908,9 +65675,6 @@ SH_DMAE
 
 SH_DMAE_BASE
   Enable support for the Renesas SuperH DMA controllers.
-  #
-  # DMA Controllers
-  #
 
 SH_ETH
   Renesas SuperH Ethernet device driver.
@@ -65944,8 +65708,6 @@ SH_WDT
   unless it is absolutely necessary.
   To compile this driver as a module, choose M here: the
   module will be called shwdt.
-  # SPARC Architecture
-  # SPARC64 Architecture
 
 SI1133
   Say Y here if you want to build a driver for the Silicon Labs SI1133
@@ -66129,8 +65891,6 @@ SL28CPLD_WATCHDOG
   on the Kontron sl28 CPLD.
   To compile this driver as a module, choose M here: the
   module will be called sl28cpld_wdt.
-  # ALPHA Architecture
-  # ARM Architecture
 
 SLAB
   The regular slab allocator that is established and known to work
@@ -67003,7 +66763,6 @@ SND_EMU10K1
   <file:Documentation/sound/cards/audigy-mixer.rst>.
   To compile this driver as a module, choose M here: the module
   will be called snd-emu10k1.
-  # select SEQ stuff to min(SND_SEQUENCER,SND_XXX)
 
 SND_EMU10K1X
   Say Y here to include support for the Dell OEM version of the
@@ -68065,7 +67824,6 @@ SND_SBAWE
   (including the Plug and Play version).
   To compile this driver as a module, choose M here: the module
   will be called snd-sbawe.
-  # select SEQ stuff to min(SND_SEQUENCER,SND_XXX)
 
 SND_SBAWE_SEQ
   No help
@@ -68962,7 +68720,6 @@ SND_SOC_INTEL_KBL_RT5663_RT5514_MAX98927_MACH
 SND_SOC_INTEL_KEEMBAY
   If you have a Intel Keembay platform then enable this option
   by saying Y or m.
-  # ASoC codec drivers
 
 SND_SOC_INTEL_MACH
   Intel ASoC Machine Drivers. If you have a Intel machine that
@@ -69533,9 +69290,6 @@ SND_SOC_PCM512x_SPI
 
 SND_SOC_PCM_SH7760
   Enable this option for SH7760 AC97/I2S audio support.
-  ##
-  ## Audio unit modules
-  ##
 
 SND_SOC_POWERPC_DMA
   No help
@@ -69582,9 +69336,6 @@ SND_SOC_QDSP6_ROUTING
 
 SND_SOC_RCAR
   This option enables R-Car SRU/SCU/SSIU/SSI sound support
-  ##
-  ## Boards
-  ##
 
 SND_SOC_RK3288_HDMI_ANALOG
   Say Y or M here if you want to add support for SoC audio on Rockchip
@@ -71336,7 +71087,6 @@ SP5100_TCO
 SPAPR_TCE_IOMMU
   Enables bits of IOMMU API required by VFIO. The iommu_ops
   is not implemented as it is not necessary for VFIO.
-  # ARM IOMMU support
 
 SPARC_US2E_CPUFREQ
   This adds the CPUFreq driver for UltraSPARC-IIe processors.
@@ -71557,9 +71307,6 @@ SPI_ALTERA
 
 SPI_AMD
   Enables SPI controller driver for AMD SoC.
-  #
-  # Add new SPI master controllers in alphabetical order above this line
-  #
 
 SPI_AR934X
   This enables support for the SPI controller present on the
@@ -71668,9 +71415,6 @@ SPI_DAVINCI
 SPI_DEBUG
   Say "yes" to enable debug messaging (like dev_dbg and pr_debug),
   sysfs, and debugfs support in SPI controller and protocol drivers.
-  #
-  # MASTER side ... talking to discrete SPI slave chips including microcontrollers
-  #
 
 SPI_DESIGNWARE
   general driver for SPI controller core from DesignWare
@@ -71888,10 +71632,6 @@ SPI_MUX
   accessible as a SPI controller, the devices behind the mux will appear
   to be chip selects on this controller. It is still necessary to
   select one or more specific mux-controller drivers.
-  #
-  # There are lots of SPI device types, with sensors and memory
-  # being probably the most widely used ones.
-  #
 
 SPI_MXIC
   This selects the Macronix MX25F0A SPI controller driver.
@@ -72119,9 +71859,6 @@ SPI_TLE62X0
   such as the TLE6220, TLE6230 and TLE6240.  This provides a
   sysfs interface, with each line presented as a kind of GPIO
   exposing both switch control and diagnostic feedback.
-  #
-  # Add new SPI protocol masters in alphabetical order above this line
-  #
 
 SPI_TOPCLIFF_PCH
   SPI driver for the Topcliff PCH (Platform Controller Hub) SPI bus
@@ -72184,7 +71921,6 @@ SPMI_HISI3670
   If you say yes to this option, support will be included for the
   built-in SPMI PMIC Arbiter interface on Hisilicon 3670
   processors.
-  # to be placed at drivers/mfd
 
 SPMI_MSM_PMIC_ARB
   If you say yes to this option, support will be included for the
@@ -72959,7 +72695,6 @@ STRICT_MODULE_RWX
   If this is set, module text and rodata memory will be made read-only,
   and non-text memory will be made non-executable. This provides
   protection against certain security exploits (e.g. writing to text)
-  # select if the architecture provides an asm/dma-direct.h header
 
 STRING_SELFTEST
   No help
@@ -74804,9 +74539,6 @@ THP_SWAP
   XXX: For now, swap cluster backing transparent huge page
   will be split after swapout.
   For selection by architectures with reasonable THP sizes.
-  #
-  # UP and nommu archs use km based percpu allocator
-  #
 
 THREAD_INFO_IN_TASK
   Select this to move thread_info off the stack into task_struct.  To
@@ -74814,7 +74546,6 @@ THREAD_INFO_IN_TASK
   except flags and fix any runtime bugs.
   One subtle change that will be needed is to use try_get_task_stack()
   and put_task_stack() in save_thread_stack_tsk() and get_wchan().
-  menu "General setup"
 
 THRUSTMASTER_FF
   Say Y here if you have a THRUSTMASTER FireStore Dual Power 2 or 3,
@@ -78156,7 +77887,6 @@ USB_CYTHERM
   device to your computer's USB port. This device is also known
   as the Cypress USB Starter kit or demo board. The Elektor
   magazine published a modified version of this device in issue
-  #291.
   To compile this driver as a module, choose M here: the
   module will be called cytherm.
 
@@ -78194,8 +77924,6 @@ USB_DUMMY_HCD
   Say "y" to link the driver statically, or "m" to build a
   dynamically linked module called "dummy_hcd" and force all
   gadget drivers to also be dynamically linked.
-  # NOTE:  Please keep dummy_hcd LAST so that "real hardware" appears
-  # first and will be selected by default.
 
 USB_DWC2
   Say Y here if your system has a Dual Role Hi-Speed USB
@@ -79101,7 +78829,6 @@ USB_G_HID
   includes sample code for accessing the device files.
   Say "y" to link the driver statically, or "m" to build a
   dynamically linked module called "g_hid".
-  # Standalone / single function gadgets
 
 USB_G_MULTI
   The Multifunction Composite Gadget provides Ethernet (RNDIS
@@ -79224,8 +78951,6 @@ USB_HIDDEV
   This module supports these devices separately using a separate
   event interface on /dev/usb/hiddevX (char 180:96 to 180:111).
   If unsure, say Y.
-  menu "USB HID Boot Protocol drivers"
-  depends on USB!=n && USB_HID!=y && EXPERT
 
 USB_HSIC_USB3503
   This option enables support for SMSC USB3503 HSIC to USB 2.0 Driver.
@@ -80144,8 +79869,6 @@ USB_PXA25X
   Say "y" to link the driver statically, or "m" to build a
   dynamically linked module called "pxa25x_udc" and force all
   gadget drivers to also be dynamically linked.
-  # if there's only one gadget driver, using only two bulk endpoints,
-  # don't waste memory for the other endpoints
 
 USB_PXA25X_SMALL
   No help
@@ -80823,9 +80546,6 @@ USB_SNP_UDC_PLAT
   This driver works with UDCs integrated into Broadcom's Northstar2
   and Cygnus SoCs.
   If unsure, say N.
-  #
-  # Controllers available in both integrated and discrete versions
-  #
 
 USB_SPEEDTOUCH
   Say Y here if you have an SpeedTouch USB or SpeedTouch 330
@@ -81920,9 +81640,6 @@ VIDEO_ATOMISP_OV5693
   ov5693 5 Mpixel camera.
   ov5693 is video camera sensor.
   It currently only works with the atomisp driver.
-  #
-  # Kconfig for flash drivers
-  #
 
 VIDEO_AU0828
   This is a hybrid analog/digital tv capture driver for
@@ -82282,7 +81999,6 @@ VIDEO_FIXED_MINOR_RANGES
   Say Y here to enable the old-style fixed-range minor assignments.
   Only useful if you rely on the old behavior and use mknod instead of udev.
   When in doubt, say N.
-  # Used by drivers that need tuner.ko
 
 VIDEO_GO7007
   This is a video4linux driver for the WIS GO7007 MPEG
@@ -82434,9 +82150,6 @@ VIDEO_IR_I2C
   If your board doesn't have an I2C IR chip, you may disable this
   option.
   In doubt, say Y.
-  #
-  # V4L2 I2C drivers that aren't related with Camera support
-  #
 
 VIDEO_IVTV
   This is a video4linux driver for Conexant cx23416 or cx23415 based
@@ -83338,9 +83051,6 @@ VIDEO_VIA_CAMERA
   Driver support for the integrated camera controller in VIA
   Chrome9 chipsets.  Currently only tested on OLPC xo-1.5 systems
   with ov7670 sensors.
-  #
-  # Platform multimedia device configuration
-  #
 
 VIDEO_VICODEC
   Driver for a Virtual Codec
@@ -83630,7 +83340,6 @@ VIRT_WIFI
 VISCONTI_WATCHDOG
   Say Y here to include support for the watchdog timer in Toshiba
   Visconti SoCs.
-  # X86 (i386 + ia64 + x86_64) Architecture
 
 VITESSE_PHY
   Currently supports the vsc8244
@@ -84333,15 +84042,12 @@ WATCHDOG_RTAS
   This driver adds watchdog support for the RTAS watchdog.
   To compile this driver as a module, choose M here. The module
   will be called wdrtas.
-  # S390 Architecture
 
 WATCHDOG_SUN4V
   Say Y here to support the hypervisor watchdog capability embedded
   in the SPARC sun4v architecture.
   To compile this driver as a module, choose M here. The module will
   be called sun4v_wdt.
-  # XTENSA Architecture
-  # Xen Architecture
 
 WATCHDOG_SYSFS
   Say Y here if you want to enable watchdog device status read through
@@ -84383,9 +84089,6 @@ WDT
   is needed (you can do this via the io and irq parameters)
   To compile this driver as a module, choose M here: the
   module will be called wdt.
-  #
-  # PCI-based Watchdog Cards
-  #
 
 WDTPCI
   If you have a PCI-WDT500/501 watchdog board, say Y here, otherwise N.
@@ -84396,9 +84099,6 @@ WDTPCI
   fan tachometer actually set up.
   To compile this driver as a module, choose M here: the
   module will be called wdt_pci.
-  #
-  # USB-based Watchdog Cards
-  #
 
 WDT_MTX1
   Hardware driver for the MTX-1 boards. This is a watchdog timer that
@@ -84950,7 +84650,6 @@ X86_32_NON_STANDARD
   subarchitectures.  It is intended for a generic binary
   kernel. If you select them all, kernel will probe it one by
   one and will fallback to default.
-  # Alphabetically sorted list of Non standard 32 bit platforms
 
 X86_32_SMP
   No help
@@ -85158,8 +84857,6 @@ X86_GENERIC
   perform better on x86 CPUs other than that selected.
   This is really intended for distributors who need more
   generic optimizations.
-  #
-  # Define implied options from the CPU selection here
 
 X86_GOLDFISH
   Enable support for the Goldfish virtual platform used primarily
@@ -85616,8 +85313,6 @@ X86_USE_PPRO_CHECKSUM
 X86_UV
   This option is needed in order to support SGI Ultraviolet systems.
   If you don't have one of these, you should say N here.
-  # Following is an alphabetically sorted list of 32 bit extended platforms
-  # Please maintain the alphabetic order if and when there are additions
 
 X86_VERBOSE_BOOTUP
   Enables the informational output from the decompression stage
@@ -86022,8 +85717,6 @@ XFRM_STATISTICS
   statistics about transformation error (or almost error) factor
   at packet processing for developer.
   If unsure, say N.
-  # This option selects XFRM_ALGO along with the AH authentication algorithms that
-  # RFC 8221 lists as MUST be implemented.
 
 XFRM_SUB_POLICY
   Support sub policy for developers. By using sub policy with main
@@ -86662,7 +86355,6 @@ ZX2967_WATCHDOG
 
 ZX_DMA
   Support the DMA engine for ZTE ZX family platform devices.
-  # driver files
 
 ZX_I2S
   Say Y or M if you want to add support for codecs attached to the
