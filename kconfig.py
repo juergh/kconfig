@@ -110,6 +110,7 @@ class Kconfig():
         # Assemble the full kconfig file path and replace environment variables
         source = os.path.join(self.ksource, kconfig)
         source = source.replace('$(SRCARCH)', SRCARCH[self.arch])
+        source = source.replace('$SRCARCH', SRCARCH[self.arch])
 
         if self.debug:
             print('-- Read Kconfig {}'.format(source))
