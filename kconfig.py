@@ -58,8 +58,9 @@ class Kconfig():
         # 'if' conditions
         self._if = []
 
-        # 'menu' hierarchy
+        # 'menu' hierarchy and dependencies
         self._menu = []
+        self._menu_depends = []
 
         # Read and parse the Kconfig tree
         self._kconfigs = {}
@@ -153,15 +154,24 @@ class Kconfig():
                 # 'menu' found
                 m = re.match(r'^\s*menu\s+"([^"]+)"', line)
                 if m:
-                    state = 'NONE'
+                    state = 'MENU'
                     self._menu.append(m.group(1))
+                    self._menu_depends.append([])
                     continue
 
                 # 'endmenu' found
                 if re.match(r'^endmenu\b', line):
                     state = 'NONE'
                     self._menu.pop()
+                    self._menu_depends.pop()
                     continue
+
+                if state == 'MENU':
+                    # Menu 'depends on' found
+                    m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
+                    if m:
+                        self._menu_depends[-1].append(m.group(1))
+                        continue
 
                 # Config found
                 m = re.match(r'^\s*(menu)?config\s+([0-9a-zA-Z_]+)\s*$', line)
@@ -177,6 +187,7 @@ class Kconfig():
                             'selects': [],
                             'if': self._if.copy(),
                             'menu': self._menu.copy(),
+                            'menu_depends': self._menu_depends.copy(),
                         }
                     # Add the Kconfig file that references this option
                     self.configs[config]['kconfig'].append(kconfig)
