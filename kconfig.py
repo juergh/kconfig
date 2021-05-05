@@ -118,6 +118,10 @@ class Kconfig():
             state = 'NONE'
 
             for line in read_line(fh):
+                # Ignore comments
+                if re.match(r'^\s*#', line):
+                    continue
+
                 # Collect any Kconfig sources
                 m = re.match(r'^source\s+"?([^"]+)', line)
                 if m:
@@ -126,7 +130,7 @@ class Kconfig():
                     continue
 
                 # Block boundary
-                if re.match(r'^(comment|choice|endchoice|endmenu)\b',
+                if re.match(r'^(comment|choice|endchoice|menu|endmenu)\b',
                             line):
                     state = 'NONE'
                     continue
