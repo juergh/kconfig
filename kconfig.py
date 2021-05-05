@@ -58,6 +58,9 @@ class Kconfig():
         # 'if' conditions
         self._if = []
 
+        # 'menu' hierarchy
+        self._menu = []
+
         # Read and parse the Kconfig tree
         self._kconfigs = {}
         self._read_kconfig(self.kconfig)
@@ -130,8 +133,7 @@ class Kconfig():
                     continue
 
                 # Block boundary
-                if re.match(r'^(comment|choice|endchoice|menu|endmenu)\b',
-                            line):
+                if re.match(r'^(comment|choice|endchoice)\b', line):
                     state = 'NONE'
                     continue
 
@@ -143,10 +145,22 @@ class Kconfig():
                     continue
 
                 # 'endif' statement
-                m = re.match(r'^endif', line)
-                if m:
+                if re.match(r'^endif\b', line):
                     state = 'NONE'
                     self._if.pop()
+                    continue
+
+                # 'menu' found
+                m = re.match(r'^\s*menu\s+"([^"]+)"', line)
+                if m:
+                    state = 'NONE'
+                    self._menu.append(m.group(1))
+                    continue
+
+                # 'endmenu' found
+                if re.match(r'^endmenu\b', line):
+                    state = 'NONE'
+                    self._menu.pop()
                     continue
 
                 # Config found
@@ -162,6 +176,7 @@ class Kconfig():
                             'depends': [],
                             'selects': [],
                             'if': self._if.copy(),
+                            'menu': self._menu.copy(),
                         }
                     # Add the Kconfig file that references this option
                     self.configs[config]['kconfig'].append(kconfig)
