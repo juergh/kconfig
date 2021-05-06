@@ -47,6 +47,16 @@ def do_list_help(kconfig, _args):
             config_help = ['No help']
         print('\n'.join(['  ' + h for h in config_help]))
 
+@add_help('Show config option')
+@add_arg('config', help='Config option name')
+def do_show_config(kconfig, args):
+    if args.config.startswith('CONFIG_'):
+        args.config = args.config[7:]
+    if args.config not in kconfig.configs:
+        error('Invalid config option name: {}'.format(args.config))
+        sys.exit(1)
+    print(json.dumps(kconfig.configs[args.config], indent=4))
+
 @add_help('Show config option help text')
 @add_arg('config', help='Config option name')
 def do_show_help(kconfig, args):
