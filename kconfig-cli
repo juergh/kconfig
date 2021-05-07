@@ -5,6 +5,7 @@
 
 import argparse
 import json
+import logging
 import sys
 
 from kconfig import Kconfig
@@ -77,7 +78,7 @@ def do_show_module_config(kconfig, args):
     print(kconfig.module_to_config(args.module) or '')
 
 @add_help('Dump the config data to the screen')
-def do_dump(kconfig, args):
+def do_dump(kconfig, _args):
     print(json.dumps(kconfig.configs, indent=4))
 
 # -----------------------------------------------------------------------------
@@ -87,8 +88,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--arch', default='amd64',
                         help='Kernel architecture (default: amd64)')
-    parser.add_argument('-d', '--debug', action='store_true', default=False,
-                        help='Enable debug output')
+    parser.add_argument('-l', '--log-level', choices=('0', '1', '2', '3', '4'),
+                        default='3',
+                        help='Set the logging level (0: critical, 1: error, ' +
+                        '2: warning, 3: info, 4: debug), default: 3')
     parser.add_argument('-s', '--ksource', default='.',
                         help='Path of the kernel source tree (default: ./)')
     parser.add_argument('-c', '--kconfig', default='Kconfig',
@@ -114,6 +117,16 @@ if __name__ == '__main__':
     # Parse the arguments
     args = parser.parse_args()
 
+    # Map the logging levels
+    log_levels = {
+        '0': logging.CRITICAL,
+        '1': logging.ERROR,
+        '2': logging.WARNING,
+        '3': logging.INFO,
+        '4': logging.DEBUG,
+    }
+
     # Parse the Kconfig tree and call the subcommand
-    kconfig = Kconfig(args.ksource, args.kconfig, args.arch, debug=args.debug)
+    kconfig = Kconfig(args.ksource, args.kconfig, args.arch,
+                      log_level=log_levels[args.log_level])
     args.func(kconfig, args)

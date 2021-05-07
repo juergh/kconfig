@@ -3,6 +3,7 @@
 # A simple kernel Kconfig parser
 #
 
+import logging
 import os
 import re
 
@@ -43,11 +44,16 @@ def read_line(fh):
         yield line
 
 class Kconfig():
-    def __init__(self, ksource, kconfig, arch, debug=False):
+    def __init__(self, ksource, kconfig, arch, log_level=logging.INFO):
         self.ksource = ksource
         self.kconfig = kconfig
         self.arch = arch
-        self.debug = debug
+
+        # Setup the logger
+        logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
+                            datefmt='%Y-%m-%d %H:%M:%S',
+                            level=log_level)
+        self.log = logging.getLogger(__name__)
 
         # The found config options
         self.configs = {}
@@ -70,8 +76,7 @@ class Kconfig():
         """
         Find all Makefiles and Kbuild files
         """
-        if self.debug:
-            print('-- Find Makefiles an Kbuild files')
+        self.log.debug('-- Find Makefiles an Kbuild files')
 
         result = []
         for path, _dirs, files in os.walk(self.ksource):
@@ -116,8 +121,7 @@ class Kconfig():
         source = source.replace('$(SRCARCH)', SRCARCH[self.arch])
         source = source.replace('$SRCARCH', SRCARCH[self.arch])
 
-        if self.debug:
-            print('-- Read Kconfig {}'.format(source))
+        self.log.debug('-- Read Kconfig %s', source)
         with open(source) as fh:
             state = 'NONE'
 
