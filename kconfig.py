@@ -7,9 +7,6 @@ import logging
 import os
 import re
 
-# Additional logging levels
-EXCESSIVE = 1000
-
 # Mapping between Debian package and kernel source architecture names
 SRCARCH = {
     # Debian arches
@@ -53,10 +50,6 @@ class Kconfig():
         self.arch = arch
 
         # Setup the logger
-        self.log_excessive = False
-        if log_level == EXCESSIVE:
-            self.log_excessive = True
-            log_level = logging.DEBUG
         logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S',
                             level=log_level)
@@ -136,9 +129,6 @@ class Kconfig():
                 # Ignore comments
                 if re.match(r'^\s*#', line):
                     continue
-
-                if self.log_excessive:
-                    self.log.debug(line)
 
                 # Collect any Kconfig sources
                 m = re.match(r'^source\s+"?([^"]+)', line)

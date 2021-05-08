@@ -8,7 +8,7 @@ import json
 import logging
 import sys
 
-from kconfig import Kconfig, EXCESSIVE
+from kconfig import Kconfig
 
 # -----------------------------------------------------------------------------
 # Helper functions
@@ -88,11 +88,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--arch', default='amd64',
                         help='Kernel architecture (default: amd64)')
-    parser.add_argument('-l', '--log-level', default='3',
-                        choices=('0', '1', '2', '3', '4', '5'),
+    parser.add_argument('-l', '--log-level', choices=('0', '1', '2', '3', '4'),
+                        default='3',
                         help='Set the logging level (0: critical, 1: error, ' +
-                        '2: warning, 3: info, 4: debug, 5: excessive), ' +
-                        'default: 3')
+                        '2: warning, 3: info, 4: debug), default: 3')
     parser.add_argument('-s', '--ksource', default='.',
                         help='Path of the kernel source tree (default: ./)')
     parser.add_argument('-c', '--kconfig', default='Kconfig',
@@ -125,7 +124,6 @@ if __name__ == '__main__':
         '2': logging.WARNING,
         '3': logging.INFO,
         '4': logging.DEBUG,
-        '5': EXCESSIVE,
     }
 
     # Parse the Kconfig tree and call the subcommand
