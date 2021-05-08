@@ -221,3 +221,7 @@ class Kconfig():
                 if state == 'CONFIG_HELP' and line.strip():
                     self.configs[config]['help'].append(line.strip())
                     continue
+
+                # Unprocessed lines
+                if line:
+                    self.log.debug('-- Ignored: %s', line)
