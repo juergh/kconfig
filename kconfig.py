@@ -76,7 +76,7 @@ class Kconfig():
         """
         Find all Makefiles and Kbuild files
         """
-        self.log.debug('-- Find Makefiles an Kbuild files')
+        self.log.debug('Find Makefiles an Kbuild files')
 
         result = []
         for path, _dirs, files in os.walk(self.ksource):
@@ -121,7 +121,7 @@ class Kconfig():
         source = source.replace('$(SRCARCH)', SRCARCH[self.arch])
         source = source.replace('$SRCARCH', SRCARCH[self.arch])
 
-        self.log.debug('-- Read Kconfig %s', source)
+        self.log.debug('Read Kconfig %s', source)
         with open(source) as fh:
             state = 'NONE'
 
@@ -131,7 +131,7 @@ class Kconfig():
                     continue
 
                 # Collect any Kconfig sources
-                m = re.match(r'^source\s+"?([^"]+)', line)
+                m = re.match(r'^\s*source\s+"([^"]+)"', line)
                 if m:
                     state = 'NONE'
                     self._read_kconfig(m.group(1))
@@ -222,6 +222,10 @@ class Kconfig():
                     self.configs[config]['help'].append(line.strip())
                     continue
 
+                # Sanity checks
+                if re.match('\s*source\s+', line):
+                    self.log.warning('BUG: %s', line)
+
                 # Unprocessed lines
                 if line:
-                    self.log.debug('-- Ignored: %s', line)
+                    self.log.debug('Ignored: %s', line)
