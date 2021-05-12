@@ -41,7 +41,7 @@ def read_line(fh):
             continue
         cont = False
 
-        yield line
+        yield line.replace('\t', ' ' * 8)
 
 class Kconfig():
     def __init__(self, ksource, kconfig, arch, log_level=logging.INFO):
@@ -134,16 +134,18 @@ class Kconfig():
 
                 # Collect config help lines
                 if state == 'CONFIG_HELP':
-                    if not help_indent and line.strip():
+                    if not help_indent and line:
                         # Store the indent of the first help line
                         help_indent = line_indent
                     if help_indent:
-                        if line.startswith(help_indent) or not line.strip():
+                        if line.startswith(help_indent) or not line:
                             self._log_line('[CONFIG:HELP_TEXT]', line)
-                            self.configs[config]['help'].append(line.strip())
+                            self.configs[config]['help'].append(line[len(help_indent):])
                             continue
                         else:
-                            # End of help
+                            # End of help, remove trailing empty lines
+                            while not self.configs[config]['help'][-1]:
+                                del self.configs[config]['help'][-1]
                             state = 'NONE'
 
                 # Ignore comments
