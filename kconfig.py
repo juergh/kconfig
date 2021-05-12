@@ -239,7 +239,7 @@ class Kconfig():
                     continue
 
                 # Sanity checks
-                if re.match('\s*source\s+', line):
+                if re.match(r'\s*source\s+', line):
                     self.log.warning('[BUG] : %s', line)
 
                 # Unprocessed lines
