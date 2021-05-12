@@ -59,7 +59,7 @@ class Kconfig():
         self.configs = {}
 
         # The list of all makefiles
-        self.makefiles = None
+        self._makefiles = []
 
         # 'if' conditions
         self._if = []
@@ -93,10 +93,10 @@ class Kconfig():
         """
         Return the config option that enables the provided kernel module
         """
-        if not self.makefiles:
-            self.makefiles = self._find_makefiles()
+        if not self._makefiles:
+            self._makefiles = self._find_makefiles()
 
-        for m in self.makefiles:
+        for m in self._makefiles:
             with open(os.path.join(self.ksource, m)) as fh:
                 for line in read_line(fh):
                     m = re.match(r'obj-\$\(CONFIG_([^\)]+)\)\s*[+:]?=\s*(.*)',
