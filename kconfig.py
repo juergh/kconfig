@@ -126,8 +126,26 @@ class Kconfig():
 
         with open(source) as fh:
             state = 'NONE'
+            help_indent = ''
 
             for line in read_line(fh):
+                # Determine the line indentation
+                line_indent = re.match(r'^(\s*)', line).group(1)
+
+                # Collect config help lines
+                if state == 'CONFIG_HELP':
+                    if not help_indent and line.strip():
+                        # Store the indent of the first help line
+                        help_indent = line_indent
+                    if help_indent:
+                        if line.startswith(help_indent) or not line.strip():
+                            self._log_line('[CONFIG:HELP_TEXT]', line)
+                            self.configs[config]['help'].append(line.strip())
+                            continue
+                        else:
+                            # End of help
+                            state = 'NONE'
+
                 # Ignore comments
                 if re.match(r'^\s*#', line):
                     self._log_line('[COMMENT]', line)
@@ -214,6 +232,7 @@ class Kconfig():
                     if re.match(r'^\s*(---)?help(---)?\s*$', line):
                         self._log_line('[CONFIG:HELP]', line)
                         state = 'CONFIG_HELP'
+                        help_indent = ''
                         continue
 
                     # Config 'depends on' found
@@ -230,12 +249,6 @@ class Kconfig():
                         self.configs[config]['selects'].append(m.group(1))
                         continue
 
-                    continue
-
-                # Collect (non-empty) config help lines
-                if state == 'CONFIG_HELP' and line.strip():
-                    self._log_line('[CONFIG:HELP_TEXT]', line)
-                    self.configs[config]['help'].append(line.strip())
                     continue
 
                 # Sanity checks
