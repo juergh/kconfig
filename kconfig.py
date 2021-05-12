@@ -34,10 +34,10 @@ def read_line(fh):
 
         # Make sure that lines ending with \ continue
         if cont:
-            line = prev_line + ' ' + line
+            line = prev_line + ' ' + line.lstrip()
         if line.endswith('\\'):
             cont = True
-            prev_line = line[:-1].strip()
+            prev_line = line[:-1].rstrip()
             continue
         cont = False
 
