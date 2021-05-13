@@ -213,7 +213,7 @@ class Kconfig():
                 if m:
                     self._log_line('[CHOICE]', line)
                     state = 'CHOICE'
-                    self._choice.append({'prompt': '', 'depends': []})
+                    self._choice.append({'prompt': '', 'depends': [], 'default': []})
                     continue
 
                 # 'endchoice' found
@@ -237,6 +237,13 @@ class Kconfig():
                     if m:
                         self._log_line('[CHOICE:DEPENDS]', line)
                         self._choice[-1]['depends'].append(m.group(1))
+                        continue
+
+                    # Choice 'default' found
+                    m = re.match(r'^\s*default\s+(.*)$', line)
+                    if m:
+                        self._log_line('[CHOICE:DEFAULT]', line)
+                        self._choice[-1]['default'].append(m.group(1))
                         continue
 
                 # -------------------------------------------------------------
