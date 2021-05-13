@@ -155,7 +155,7 @@ class Kconfig():
 
                 # -------------------------------------------------------------
                 # Ignore comments
-                if re.match(r'^\s*#', line):
+                if re.match(r'^\s*(#|comment\s+"([^"]+)")', line):
                     self._log_line('[COMMENT]', line)
                     continue
 
@@ -166,13 +166,6 @@ class Kconfig():
                     self._log_line('[SOURCE]', line)
                     state = 'NONE'
                     self._read_kconfig(m.group(1))
-                    continue
-
-                # -------------------------------------------------------------
-                # 'comment' found
-                if re.match(r'^comment\b', line):
-                    self._log_line('[COMMENT]', line)
-                    state = 'NONE'
                     continue
 
                 # -------------------------------------------------------------
