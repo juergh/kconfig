@@ -64,9 +64,8 @@ class Kconfig():
         # 'if' conditions
         self._if = []
 
-        # 'menu' hierarchy and dependencies
+        # 'menu' conditions
         self._menu = []
-        self._menu_depends = []
 
         # 'choice' conditions
         self._choice = []
@@ -190,8 +189,7 @@ class Kconfig():
                 if m:
                     self._log_line('[MENU]', line)
                     state = 'MENU'
-                    self._menu.append(m.group(1))
-                    self._menu_depends.append([])
+                    self._menu.append({'menu': m.group(1), 'depends': []})
                     continue
 
                 # 'endmenu' found
@@ -199,7 +197,6 @@ class Kconfig():
                     self._log_line('[ENDMENU]', line)
                     state = 'NONE'
                     self._menu.pop()
-                    self._menu_depends.pop()
                     continue
 
                 if state == 'MENU':
@@ -207,7 +204,7 @@ class Kconfig():
                     m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
                     if m:
                         self._log_line('[MENU:DEPENDS]', line)
-                        self._menu_depends[-1].append(m.group(1))
+                        self._menu[-1]['depends'].append(m.group(1))
                         continue
 
                 # -------------------------------------------------------------
@@ -258,7 +255,6 @@ class Kconfig():
                             'selects': [],
                             'if': self._if.copy(),
                             'menu': self._menu.copy(),
-                            'menu_depends': self._menu_depends.copy(),
                             'choice': self._choice.copy(),
                         }
                     # Add the Kconfig file that references this option
