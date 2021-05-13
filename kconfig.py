@@ -130,6 +130,7 @@ class Kconfig():
         with open(source) as fh:
             state = 'NONE'
             help_indent = ''
+            config = None
 
             for line in read_line(fh):
                 # Determine the line indentation
@@ -146,11 +147,11 @@ class Kconfig():
                             self._log_line('[CONFIG:HELP_TEXT]', line)
                             self.configs[config]['help'].append(line[len(help_indent):])
                             continue
-                        else:
-                            # End of help, remove trailing empty lines
-                            while not self.configs[config]['help'][-1]:
-                                del self.configs[config]['help'][-1]
-                            state = 'NONE'
+
+                        # End of help, remove trailing empty lines
+                        while not self.configs[config]['help'][-1]:
+                            del self.configs[config]['help'][-1]
+                        state = 'NONE'
 
                 # -------------------------------------------------------------
                 # Ignore comments
