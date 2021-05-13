@@ -68,6 +68,9 @@ class Kconfig():
         self._menu = []
         self._menu_depends = []
 
+        # 'choice' conditions
+        self._choice = []
+
         # Read and parse the Kconfig tree
         self._kconfigs = {}
         self._read_kconfig(self.kconfig)
@@ -132,6 +135,7 @@ class Kconfig():
                 # Determine the line indentation
                 line_indent = re.match(r'^(\s*)', line).group(1)
 
+                # -------------------------------------------------------------
                 # Collect config help lines
                 if state == 'CONFIG_HELP':
                     if not help_indent and line:
@@ -148,11 +152,13 @@ class Kconfig():
                                 del self.configs[config]['help'][-1]
                             state = 'NONE'
 
+                # -------------------------------------------------------------
                 # Ignore comments
                 if re.match(r'^\s*#', line):
                     self._log_line('[COMMENT]', line)
                     continue
 
+                # -------------------------------------------------------------
                 # Collect any Kconfig sources
                 m = re.match(r'^\s*source\s+"([^"]+)"', line)
                 if m:
@@ -161,12 +167,14 @@ class Kconfig():
                     self._read_kconfig(m.group(1))
                     continue
 
-                # Block boundary
-                if re.match(r'^(comment|choice|endchoice)\b', line):
-                    self._log_line('[BOUNDARY]', line)
+                # -------------------------------------------------------------
+                # 'comment' found
+                if re.match(r'^comment\b', line):
+                    self._log_line('[COMMENT]', line)
                     state = 'NONE'
                     continue
 
+                # -------------------------------------------------------------
                 # 'if' statement
                 m = re.match(r'^if\s+(.*\S)\s*$', line)
                 if m:
@@ -182,6 +190,7 @@ class Kconfig():
                     self._if.pop()
                     continue
 
+                # -------------------------------------------------------------
                 # 'menu' found
                 m = re.match(r'^\s*menu\s+"([^"]+)"', line)
                 if m:
@@ -207,6 +216,39 @@ class Kconfig():
                         self._menu_depends[-1].append(m.group(1))
                         continue
 
+                # -------------------------------------------------------------
+                # 'choice' found
+                m = re.match(r'^choice\b', line)
+                if m:
+                    self._log_line('[CHOICE]', line)
+                    state = 'CHOICE'
+                    self._choice.append({'prompt': '', 'depends': []})
+                    continue
+
+                # 'endchoice' found
+                m = re.match(r'^endchoice\b', line)
+                if m:
+                    self._log_line('[ENDCHOICE]', line)
+                    state = 'NONE'
+                    self._choice.pop()
+                    continue
+
+                if state == 'CHOICE':
+                    # Choice 'prompt' found
+                    m = re.match(r'^\s+prompt\s+"(.*)"$', line)
+                    if m:
+                        self._log_line('[CHOICE:PROMPT]', line)
+                        self._choice[-1]['prompt'] = m.group(1)
+                        continue
+
+                    # Choice 'depends on' found
+                    m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
+                    if m:
+                        self._log_line('[CHOICE:DEPENDS]', line)
+                        self._choice[-1]['depends'].append(m.group(1))
+                        continue
+
+                # -------------------------------------------------------------
                 # Config found
                 m = re.match(r'^\s*(menu)?config\s+([0-9a-zA-Z_]+)\s*$', line)
                 if m:
@@ -223,7 +265,7 @@ class Kconfig():
                             'if': self._if.copy(),
                             'menu': self._menu.copy(),
                             'menu_depends': self._menu_depends.copy(),
-                            'type': {},
+                            'choice': self._choice.copy(),
                         }
                     # Add the Kconfig file that references this option
                     self.configs[config]['kconfig'].append(kconfig)
@@ -253,10 +295,12 @@ class Kconfig():
 
                     continue
 
+                # -------------------------------------------------------------
                 # Sanity checks
                 if re.match(r'\s*source\s+', line):
                     self.log.warning('[BUG] : %s', line)
 
+                # -------------------------------------------------------------
                 # Unprocessed lines
                 if line:
                     self._log_line('[IGNORED]', line)
