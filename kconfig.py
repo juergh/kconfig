@@ -259,7 +259,7 @@ class Kconfig():
                             'kconfig': [],
                             'help': [],
                             'depends': [],
-                            'selects': [],
+                            'select': [],
                             'if': self._if.copy(),
                             'menu': self._menu.copy(),
                             'choice': self._choice.copy(),
@@ -287,7 +287,7 @@ class Kconfig():
                     m = re.match(r'^\s*select\s+(\S+)', line)
                     if m:
                         self._log_line('[CONFIG:SELECT]', line)
-                        self.configs[config]['selects'].append(m.group(1))
+                        self.configs[config]['select'].append(m.group(1))
                         continue
 
                     continue
