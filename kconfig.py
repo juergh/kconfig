@@ -75,7 +75,7 @@ class Kconfig():
         self._read_kconfig(self.kconfig)
 
     def _log_line(self, token, line):
-        self.log.debug('%-18s : %s', token, line)
+        self.log.debug('%20s : %s', token, line)
 
     def _find_makefiles(self):
         """
@@ -143,7 +143,7 @@ class Kconfig():
                         help_indent = line_indent
                     if help_indent:
                         if line.startswith(help_indent) or not line:
-                            self._log_line('[CONFIG:HELP_TEXT]', line)
+                            self._log_line('[config:help_text]', line)
                             self.configs[config]['help'].append(line[len(help_indent):])
                             continue
 
@@ -155,14 +155,14 @@ class Kconfig():
                 # -------------------------------------------------------------
                 # Ignore comments
                 if re.match(r'^\s*(#|comment\s+"[^"]+")', line):
-                    self._log_line('[COMMENT]', line)
+                    self._log_line('[comment]', line)
                     continue
 
                 # -------------------------------------------------------------
                 # Collect any Kconfig sources
                 m = re.match(r'^\s*source\s+"([^"]+)"', line)
                 if m:
-                    self._log_line('[SOURCE]', line)
+                    self._log_line('[source]', line)
                     state = 'NONE'
                     self._read_kconfig(m.group(1))
                     continue
@@ -171,14 +171,14 @@ class Kconfig():
                 # 'if' statement
                 m = re.match(r'^if\s+(.*)$', line)
                 if m:
-                    self._log_line('[IF]', line)
+                    self._log_line('[if]', line)
                     state = 'NONE'
                     self._if.append(m.group(1))
                     continue
 
                 # 'endif' statement
                 if re.match(r'^endif\b', line):
-                    self._log_line('[ENDIF]', line)
+                    self._log_line('[endif]', line)
                     state = 'NONE'
                     self._if.pop()
                     continue
@@ -187,7 +187,7 @@ class Kconfig():
                 # 'menu' found
                 m = re.match(r'^\s*menu\s+"([^"]+)"', line)
                 if m:
-                    self._log_line('[MENU]', line)
+                    self._log_line('[menu]', line)
                     state = 'MENU'
                     self._menu.append({
                         'menu': m.group(1),
@@ -197,7 +197,7 @@ class Kconfig():
 
                 # 'endmenu' found
                 if re.match(r'^endmenu\b', line):
-                    self._log_line('[ENDMENU]', line)
+                    self._log_line('[endmenu]', line)
                     state = 'NONE'
                     self._menu.pop()
                     continue
@@ -206,14 +206,14 @@ class Kconfig():
                     # Menu 'depends on' found
                     m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
                     if m:
-                        self._log_line('[MENU:DEPENDS]', line)
+                        self._log_line('[menu:depends_on]', line)
                         self._menu[-1]['depends'].append(m.group(1))
                         continue
 
                 # -------------------------------------------------------------
                 # 'choice' found
                 if re.match(r'^choice\b', line):
-                    self._log_line('[CHOICE]', line)
+                    self._log_line('[choice]', line)
                     state = 'CHOICE'
                     self._choice.append({
                         'prompt': '',
@@ -224,7 +224,7 @@ class Kconfig():
 
                 # 'endchoice' found
                 if re.match(r'^endchoice\b', line):
-                    self._log_line('[ENDCHOICE]', line)
+                    self._log_line('[endchoice]', line)
                     state = 'NONE'
                     self._choice.pop()
                     continue
@@ -233,21 +233,21 @@ class Kconfig():
                     # Choice 'prompt' found
                     m = re.match(r'^\s+prompt\s+"([^"]+)"', line)
                     if m:
-                        self._log_line('[CHOICE:PROMPT]', line)
+                        self._log_line('[choice:prompt]', line)
                         self._choice[-1]['prompt'] = m.group(1)
                         continue
 
                     # Choice 'depends on' found
                     m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
                     if m:
-                        self._log_line('[CHOICE:DEPENDS]', line)
+                        self._log_line('[choice:depends_on]', line)
                         self._choice[-1]['depends'].append(m.group(1))
                         continue
 
                     # Choice 'default' found
                     m = re.match(r'^\s*default\s+(.*)$', line)
                     if m:
-                        self._log_line('[CHOICE:DEFAULT]', line)
+                        self._log_line('[choice:default]', line)
                         self._choice[-1]['default'].append(m.group(1))
                         continue
 
@@ -255,7 +255,7 @@ class Kconfig():
                 # Config found
                 m = re.match(r'^\s*(menu)?config\s+([0-9a-zA-Z_]+)', line)
                 if m:
-                    self._log_line('[CONFIG]', line)
+                    self._log_line('[config]', line)
                     state = 'CONFIG'
                     config = m.group(2)
                     # Initialize the config data hash
@@ -276,7 +276,7 @@ class Kconfig():
                 if state == 'CONFIG':
                     # Config 'help' found
                     if re.match(r'^\s*(---)?help(---)?\s*$', line):
-                        self._log_line('[CONFIG:HELP]', line)
+                        self._log_line('[config:help]', line)
                         state = 'CONFIG_HELP'
                         help_indent = ''
                         continue
@@ -284,14 +284,14 @@ class Kconfig():
                     # Config 'depends on' found
                     m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
                     if m:
-                        self._log_line('[CONFIG:DEPENDS]', line)
+                        self._log_line('[config:depends_on]', line)
                         self.configs[config]['depends'].append(m.group(1))
                         continue
 
                     # Config 'select' found
                     m = re.match(r'^\s*select\s+(.*)$', line)
                     if m:
-                        self._log_line('[CONFIG:SELECT]', line)
+                        self._log_line('[config:select]', line)
                         self.configs[config]['select'].append(m.group(1))
                         continue
 
@@ -300,9 +300,9 @@ class Kconfig():
                 # -------------------------------------------------------------
                 # Sanity checks
                 if re.match(r'\s*source\s+', line):
-                    self.log.warning('[BUG] : %s', line)
+                    self.log.warning('[bug] : %s', line)
 
                 # -------------------------------------------------------------
                 # Unprocessed lines
                 if line:
-                    self._log_line('[IGNORED]', line)
+                    self._log_line('[ignored]', line)
