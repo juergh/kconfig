@@ -153,6 +153,20 @@ class Kconfig():
                         state = 'NONE'
 
                 # -------------------------------------------------------------
+                # Ignore choice help lines
+                if state == 'CHOICE_HELP':
+                    if not help_indent and line:
+                        # Store the indent of the first help line
+                        help_indent = line_indent
+                    if help_indent:
+                        if line and not line.startswith(help_indent):
+                            # End of help
+                            state = 'NONE'
+                        else:
+                            self._log_line('[choice:help_text]', line)
+                            continue
+
+                # -------------------------------------------------------------
                 # Ignore comments
                 if re.match(r'^\s*(#|comment\s+"[^"]+")', line):
                     self._log_line('[comment]', line)
@@ -261,6 +275,13 @@ class Kconfig():
                     if m:
                         self._log_line('[choice:default]', line)
                         self._choice[-1]['default'].append(m.group(1))
+                        continue
+
+                    # Choice 'help' found
+                    if re.match(r'^\s*(---)?help(---)?\s*$', line):
+                        self._log_line('[choice:help]', line)
+                        state = 'CHOICE_HELP'
+                        help_indent = ''
                         continue
 
                 # -------------------------------------------------------------
