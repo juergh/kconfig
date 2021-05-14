@@ -154,7 +154,7 @@ class Kconfig():
 
                 # -------------------------------------------------------------
                 # Ignore comments
-                if re.match(r'^\s*(#|comment\s+"([^"]+)")', line):
+                if re.match(r'^\s*(#|comment\s+"[^"]+")', line):
                     self._log_line('[COMMENT]', line)
                     continue
 
@@ -169,7 +169,7 @@ class Kconfig():
 
                 # -------------------------------------------------------------
                 # 'if' statement
-                m = re.match(r'^if\s+(.*\S)\s*$', line)
+                m = re.match(r'^if\s+(.*)$', line)
                 if m:
                     self._log_line('[IF]', line)
                     state = 'NONE'
@@ -212,8 +212,7 @@ class Kconfig():
 
                 # -------------------------------------------------------------
                 # 'choice' found
-                m = re.match(r'^choice\b', line)
-                if m:
+                if re.match(r'^choice\b', line):
                     self._log_line('[CHOICE]', line)
                     state = 'CHOICE'
                     self._choice.append({
@@ -224,8 +223,7 @@ class Kconfig():
                     continue
 
                 # 'endchoice' found
-                m = re.match(r'^endchoice\b', line)
-                if m:
+                if re.match(r'^endchoice\b', line):
                     self._log_line('[ENDCHOICE]', line)
                     state = 'NONE'
                     self._choice.pop()
@@ -233,7 +231,7 @@ class Kconfig():
 
                 if state == 'CHOICE':
                     # Choice 'prompt' found
-                    m = re.match(r'^\s+prompt\s+"(.*)"$', line)
+                    m = re.match(r'^\s+prompt\s+"([^"]+)"', line)
                     if m:
                         self._log_line('[CHOICE:PROMPT]', line)
                         self._choice[-1]['prompt'] = m.group(1)
@@ -255,7 +253,7 @@ class Kconfig():
 
                 # -------------------------------------------------------------
                 # Config found
-                m = re.match(r'^\s*(menu)?config\s+([0-9a-zA-Z_]+)\s*$', line)
+                m = re.match(r'^\s*(menu)?config\s+([0-9a-zA-Z_]+)', line)
                 if m:
                     self._log_line('[CONFIG]', line)
                     state = 'CONFIG'
@@ -291,7 +289,7 @@ class Kconfig():
                         continue
 
                     # Config 'select' found
-                    m = re.match(r'^\s*select\s+(\S+)', line)
+                    m = re.match(r'^\s*select\s+(.*)$', line)
                     if m:
                         self._log_line('[CONFIG:SELECT]', line)
                         self.configs[config]['select'].append(m.group(1))
