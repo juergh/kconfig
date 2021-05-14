@@ -159,6 +159,18 @@ class Kconfig():
                     continue
 
                 # -------------------------------------------------------------
+                # Variable assignment
+                if re.match(r'^\S+\s+(:)?=', line):
+                    self._log_line('[variable]', line)
+                    continue
+
+                # -------------------------------------------------------------
+                # Macro definition
+                if re.match(r'^\$\(.+\)', line):
+                    self._log_line('[macro]', line)
+                    continue
+
+                # -------------------------------------------------------------
                 # Collect any Kconfig sources
                 m = re.match(r'^\s*source\s+"([^"]+)"', line)
                 if m:
