@@ -189,7 +189,10 @@ class Kconfig():
                 if m:
                     self._log_line('[MENU]', line)
                     state = 'MENU'
-                    self._menu.append({'menu': m.group(1), 'depends': []})
+                    self._menu.append({
+                        'menu': m.group(1),
+                        'depends': [],
+                    })
                     continue
 
                 # 'endmenu' found
@@ -213,7 +216,11 @@ class Kconfig():
                 if m:
                     self._log_line('[CHOICE]', line)
                     state = 'CHOICE'
-                    self._choice.append({'prompt': '', 'depends': [], 'default': []})
+                    self._choice.append({
+                        'prompt': '',
+                        'depends': [],
+                        'default': [],
+                    })
                     continue
 
                 # 'endchoice' found
