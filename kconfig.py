@@ -185,12 +185,12 @@ class Kconfig():
 
                 # -------------------------------------------------------------
                 # 'menu' found
-                m = re.match(r'^\s*menu\s+"([^"]+)"', line)
+                m = re.match(r'^\s*(main)?menu\s+"([^"]+)"', line)
                 if m:
                     self._log_line('[menu]', line)
                     state = 'MENU'
                     self._menu.append({
-                        'menu': m.group(1),
+                        'menu': m.group(2),
                         'depends': [],
                     })
                     continue
