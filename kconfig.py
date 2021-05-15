@@ -325,6 +325,7 @@ class Kconfig():
                             'help': [],
                             'depends_on': [],
                             'select': [],
+                            'bool': [],
                             'if': self._if.copy(),
                             'menu': self._menu.copy(),
                             'choice': self._choice.copy(),
@@ -355,6 +356,14 @@ class Kconfig():
                         option = 'SELECT'
                         self._log_line([section, option], line)
                         self.configs[config]['select'].append(m.group(1))
+                        continue
+
+                    # Config 'bool' found
+                    m = re.match(r'^\s*bool(|\s+(.*))$', line)
+                    if m:
+                        option = 'BOOL'
+                        self._log_line([section, option], line)
+                        self.configs[config]['bool'].append(m.group(2))
                         continue
 
                 # -------------------------------------------------------------
