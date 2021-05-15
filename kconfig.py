@@ -326,6 +326,7 @@ class Kconfig():
                             'depends_on': [],
                             'select': [],
                             'bool': [],
+                            'default': [],
                             'if': self._if.copy(),
                             'menu': self._menu.copy(),
                             'choice': self._choice.copy(),
@@ -364,6 +365,17 @@ class Kconfig():
                         option = 'BOOL'
                         self._log_line([section, option], line)
                         self.configs[config]['bool'].append(m.group(2))
+                        continue
+
+                    # Config 'def_bool', 'def_tristate' or 'default' found
+                    m = re.match(r'^\s*(def(_(bool|tristate)|ault))\s+(.*)$',
+                                 line)
+                    if m:
+                        option = 'DEFAULT'
+                        self._log_line([section, option], line)
+                        self.configs[config]['default'].append({
+                            m.group(1): m.group(4),
+                        })
                         continue
 
                 # -------------------------------------------------------------
