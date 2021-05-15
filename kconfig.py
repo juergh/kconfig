@@ -357,8 +357,6 @@ class Kconfig():
                         self.configs[config]['select'].append(m.group(1))
                         continue
 
-                    continue
-
                 # -------------------------------------------------------------
                 # Sanity checks
                 if re.match(r'\s*source\s+', line):
