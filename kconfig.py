@@ -74,7 +74,8 @@ class Kconfig():
         self._kconfigs = {}
         self._read_kconfig(self.kconfig)
 
-    def _log_line(self, token, line):
+    def _log_line(self, tokens, line):
+        token = '[{}]'.format(':'.join([t.lower() for t in tokens]))
         self.log.debug('%20s : %s', token, line)
 
     def _find_makefiles(self):
@@ -127,9 +128,10 @@ class Kconfig():
         source = source.replace('$SRCARCH', SRCARCH[self.arch])
 
         with open(source) as fh:
-            state = 'NONE'
-            help_indent = ''
+            section = 'NONE'
+            option = 'NONE'
             config = None
+            indent = ''
 
             for line in read_line(fh):
                 # Determine the line indentation
@@ -137,59 +139,59 @@ class Kconfig():
 
                 # -------------------------------------------------------------
                 # Collect config help lines
-                if state == 'CONFIG_HELP':
-                    if not help_indent and line:
-                        # Store the indent of the first help line
-                        help_indent = line_indent
-                    if help_indent:
-                        if line.startswith(help_indent) or not line:
-                            self._log_line('[config:help_text]', line)
-                            self.configs[config]['help'].append(line[len(help_indent):])
+                if section == 'CONFIG' and option == 'HELP':
+                    if not indent and line:
+                        # Save the indent of the first help line
+                        indent = line_indent
+                    if indent:
+                        if line and not line.startswith(indent):
+                            # End of help, remove trailing empty lines
+                            while not self.configs[config]['help'][-1]:
+                                del self.configs[config]['help'][-1]
+                            option = 'NONE'
+                        else:
+                            self._log_line([section, option], line)
+                            self.configs[config]['help'].append(line[len(indent):])
                             continue
-
-                        # End of help, remove trailing empty lines
-                        while not self.configs[config]['help'][-1]:
-                            del self.configs[config]['help'][-1]
-                        state = 'NONE'
 
                 # -------------------------------------------------------------
                 # Ignore choice help lines
-                if state == 'CHOICE_HELP':
-                    if not help_indent and line:
-                        # Store the indent of the first help line
-                        help_indent = line_indent
-                    if help_indent:
-                        if line and not line.startswith(help_indent):
+                if section == 'CHOICE' and option == 'HELP':
+                    if not indent and line:
+                        # Save the indent of the first help line
+                        indent = line_indent
+                    if indent:
+                        if line and not line.startswith(indent):
                             # End of help
-                            state = 'NONE'
+                            option = 'NONE'
                         else:
-                            self._log_line('[choice:help_text]', line)
+                            self._log_line([section, option], line)
                             continue
 
                 # -------------------------------------------------------------
                 # Ignore comments
-                if re.match(r'^\s*(#|comment\s+"[^"]+")', line):
-                    self._log_line('[comment]', line)
+                if re.match(r'^\s*#', line):
+                    self._log_line(['#'], line)
                     continue
 
                 # -------------------------------------------------------------
                 # Variable assignment
                 if re.match(r'^\S+\s+(:)?=', line):
-                    self._log_line('[variable]', line)
+                    self._log_line(['variable'], line)
                     continue
 
                 # -------------------------------------------------------------
                 # Macro definition
                 if re.match(r'^\$\(.+\)', line):
-                    self._log_line('[macro]', line)
+                    self._log_line(['macro'], line)
                     continue
 
                 # -------------------------------------------------------------
                 # Collect any Kconfig sources
                 m = re.match(r'^\s*source\s+"([^"]+)"', line)
                 if m:
-                    self._log_line('[source]', line)
-                    state = 'NONE'
+                    section = 'SOURCE'
+                    self._log_line([section], line)
                     self._read_kconfig(m.group(1))
                     continue
 
@@ -197,106 +199,131 @@ class Kconfig():
                 # 'if' statement
                 m = re.match(r'^if\s+(.*)$', line)
                 if m:
-                    self._log_line('[if]', line)
-                    state = 'NONE'
+                    self._log_line(['if'], line)
                     self._if.append(m.group(1))
                     continue
 
                 # 'endif' statement
                 if re.match(r'^endif\b', line):
-                    self._log_line('[endif]', line)
-                    state = 'NONE'
+                    self._log_line(['endif'], line)
                     self._if.pop()
                     continue
+
+                # -------------------------------------------------------------
+                # 'comment' found
+                if re.match(r'^comment\s+"[^"]+"', line):
+                    section = 'COMMENT'
+                    self._log_line([section], line)
+                    continue
+
+                if section == 'COMMENT':
+                    # Comment 'depends on' found
+                    if re.match(r'^\s*depends\s+on\s+', line):
+                        option = 'DEPENDS_ON'
+                        self._log_line([section, option], line)
+                        continue
 
                 # -------------------------------------------------------------
                 # 'menu' found
                 m = re.match(r'^\s*(main)?menu\s+"([^"]+)"', line)
                 if m:
-                    self._log_line('[menu]', line)
-                    state = 'MENU'
+                    section = 'MENU'
+                    self._log_line([section], line)
                     self._menu.append({
                         'menu': m.group(2),
-                        'depends': [],
+                        'depends_on': [],
+                        'visible_if': [],
                     })
                     continue
 
                 # 'endmenu' found
                 if re.match(r'^endmenu\b', line):
-                    self._log_line('[endmenu]', line)
-                    state = 'NONE'
+                    section = 'ENDMENU'
+                    self._log_line([section], line)
                     self._menu.pop()
                     continue
 
-                if state == 'MENU':
+                if section == 'MENU':
                     # Menu 'depends on' found
                     m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
                     if m:
-                        self._log_line('[menu:depends_on]', line)
-                        self._menu[-1]['depends'].append(m.group(1))
+                        option = 'DEPENDS_ON'
+                        self._log_line([section, option], line)
+                        self._menu[-1]['depends_on'].append(m.group(1))
+                        continue
+
+                    # Menu 'visible if' found
+                    m = re.match(r'^\s*visible\s+if\s+(.*)$', line)
+                    if m:
+                        option = 'VISIBLE_IF'
+                        self._log_line([section, option], line)
+                        self._menu[-1]['visible_if'].append(m.group(1))
                         continue
 
                 # -------------------------------------------------------------
                 # 'choice' found
                 if re.match(r'^choice\b', line):
-                    self._log_line('[choice]', line)
-                    state = 'CHOICE'
+                    section = 'CHOICE'
+                    self._log_line([section], line)
                     self._choice.append({
                         'prompt': '',
-                        'depends': [],
+                        'depends_on': [],
                         'default': [],
                     })
                     continue
 
                 # 'endchoice' found
                 if re.match(r'^endchoice\b', line):
-                    self._log_line('[endchoice]', line)
-                    state = 'NONE'
+                    section = 'ENDCHOICE'
+                    self._log_line([section], line)
                     self._choice.pop()
                     continue
 
-                if state == 'CHOICE':
+                if section == 'CHOICE':
                     # Choice 'prompt' found
                     m = re.match(r'^\s+prompt\s+"([^"]+)"', line)
                     if m:
-                        self._log_line('[choice:prompt]', line)
+                        option = 'PROMPT'
+                        self._log_line([section, option], line)
                         self._choice[-1]['prompt'] = m.group(1)
                         continue
 
                     # Choice 'depends on' found
                     m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
                     if m:
-                        self._log_line('[choice:depends_on]', line)
-                        self._choice[-1]['depends'].append(m.group(1))
+                        option = 'DEPENDS_ON'
+                        self._log_line([section, option], line)
+                        self._choice[-1]['depends_on'].append(m.group(1))
                         continue
 
                     # Choice 'default' found
                     m = re.match(r'^\s*default\s+(.*)$', line)
                     if m:
-                        self._log_line('[choice:default]', line)
+                        option = 'DEFAULT'
+                        self._log_line([section, option], line)
                         self._choice[-1]['default'].append(m.group(1))
                         continue
 
                     # Choice 'help' found
                     if re.match(r'^\s*(---)?help(---)?\s*$', line):
-                        self._log_line('[choice:help]', line)
-                        state = 'CHOICE_HELP'
-                        help_indent = ''
+                        option = 'HELP'
+                        self._log_line([section, option], line)
+                        indent = ''
                         continue
 
                 # -------------------------------------------------------------
                 # Config found
                 m = re.match(r'^\s*(menu)?config\s+([0-9a-zA-Z_]+)', line)
                 if m:
-                    self._log_line('[config]', line)
-                    state = 'CONFIG'
+                    section = 'CONFIG'
+                    self._log_line([section], line)
                     config = m.group(2)
                     # Initialize the config data hash
                     if config not in self.configs:
                         self.configs[config] = {
                             'kconfig': [],
                             'help': [],
-                            'depends': [],
+                            'depends_on': [],
                             'select': [],
                             'if': self._if.copy(),
                             'menu': self._menu.copy(),
@@ -306,25 +333,27 @@ class Kconfig():
                     self.configs[config]['kconfig'].append(kconfig)
                     continue
 
-                if state == 'CONFIG':
+                if section == 'CONFIG':
                     # Config 'help' found
                     if re.match(r'^\s*(---)?help(---)?\s*$', line):
-                        self._log_line('[config:help]', line)
-                        state = 'CONFIG_HELP'
-                        help_indent = ''
+                        option = 'HELP'
+                        self._log_line([section, option], line)
+                        indent = ''
                         continue
 
                     # Config 'depends on' found
                     m = re.match(r'^\s*depends\s+on\s+(.*)$', line)
                     if m:
-                        self._log_line('[config:depends_on]', line)
-                        self.configs[config]['depends'].append(m.group(1))
+                        option = 'DEPENDS_ON'
+                        self._log_line([section, option], line)
+                        self.configs[config]['depends_on'].append(m.group(1))
                         continue
 
                     # Config 'select' found
                     m = re.match(r'^\s*select\s+(.*)$', line)
                     if m:
-                        self._log_line('[config:select]', line)
+                        option = 'SELECT'
+                        self._log_line([section, option], line)
                         self.configs[config]['select'].append(m.group(1))
                         continue
 
@@ -338,4 +367,4 @@ class Kconfig():
                 # -------------------------------------------------------------
                 # Unprocessed lines
                 if line:
-                    self._log_line('[ignored]', line)
+                    self._log_line(['ignored'], line)
