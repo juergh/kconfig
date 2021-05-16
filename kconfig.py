@@ -134,41 +134,41 @@ class Kconfig():
             section = 'NONE'
             option = 'NONE'
             config = None
-            indent = ''
+            help_indent = 0
 
             for line in read_line(fh):
                 # Determine the line indentation
-                line_indent = re.match(r'^(\s*)', line).group(1)
+                line_indent = len(re.match(r'^(\s*)', line).group(1))
 
                 # -------------------------------------------------------------
                 # Collect config help lines
                 if section == 'CONFIG' and option == 'HELP':
-                    if not indent and line:
-                        # Save the indent of the first help line
-                        indent = line_indent
-                    if indent:
-                        if line and not line.startswith(indent):
+                    if not help_indent and line_indent:
+                        # Indentation of first line of help text
+                        help_indent = line_indent
+                    if help_indent:
+                        if line and line_indent < help_indent:
                             # End of help, remove trailing empty lines
                             while not self.configs[config]['help'][-1]:
                                 del self.configs[config]['help'][-1]
                             option = 'NONE'
                         else:
-                            self._log_line([section, option], line)
-                            self.configs[config]['help'].append(line[len(indent):])
+                            self._log_line([section, 'help_text'], line)
+                            self.configs[config]['help'].append(line[help_indent:])
                             continue
 
                 # -------------------------------------------------------------
                 # Ignore choice help lines
                 if section == 'CHOICE' and option == 'HELP':
-                    if not indent and line:
-                        # Save the indent of the first help line
-                        indent = line_indent
-                    if indent:
-                        if line and not line.startswith(indent):
+                    if not help_indent and line_indent:
+                        # Indentation of first line of help text
+                        help_indent = line_indent
+                    if help_indent:
+                        if line and line_indent < help_indent:
                             # End of help
                             option = 'NONE'
                         else:
-                            self._log_line([section, option], line)
+                            self._log_line([section, 'help_text'], line)
                             continue
 
                 # -------------------------------------------------------------
@@ -311,7 +311,7 @@ class Kconfig():
                     if re.match(r'^\s*(---)?help(---)?\s*$', line):
                         option = 'HELP'
                         self._log_line([section, option], line)
-                        indent = ''
+                        help_indent = 0
                         continue
 
                 # -------------------------------------------------------------
@@ -347,7 +347,7 @@ class Kconfig():
                     if re.match(r'^\s*(---)?help(---)?\s*$', line):
                         option = 'HELP'
                         self._log_line([section, option], line)
-                        indent = ''
+                        help_indent = 0
                         continue
 
                     # Config 'depends on' found
