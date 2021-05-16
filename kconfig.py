@@ -328,6 +328,9 @@ class Kconfig():
                             'type': [],
                             'default': [],
                             'range': [],
+                            'option': [],
+                            'imply': [],
+                            'prompt': [],
                             'if': self._if.copy(),
                             'menu': self._menu.copy(),
                             'choice': self._choice.copy(),
@@ -388,6 +391,30 @@ class Kconfig():
                         option = 'RANGE'
                         self._log_line([section, option], line)
                         self.configs[config]['range'].append(m.group(1))
+                        continue
+
+                    # Config 'option' found
+                    m = re.match(r'^\s*option\s+(.*)$', line)
+                    if m:
+                        option = 'OPTION'
+                        self._log_line([section, option], line)
+                        self.configs[config]['option'].append(m.group(1))
+                        continue
+
+                    # Config 'imply' found
+                    m = re.match(r'^\s*imply\s+(.*)$', line)
+                    if m:
+                        option = 'IMPLY'
+                        self._log_line([section, option], line)
+                        self.configs[config]['imply'].append(m.group(1))
+                        continue
+
+                    # Config 'prompt' found
+                    m = re.match(r'^\s*prompt\s+"([^"]+)"', line)
+                    if m:
+                        option = 'PROMPT'
+                        self._log_line([section, option], line)
+                        self.configs[config]['prompt'].append(m.group(1))
                         continue
 
                 # -------------------------------------------------------------
