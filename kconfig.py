@@ -327,6 +327,7 @@ class Kconfig():
                             'select': [],
                             'type': [],
                             'default': [],
+                            'range': [],
                             'if': self._if.copy(),
                             'menu': self._menu.copy(),
                             'choice': self._choice.copy(),
@@ -379,6 +380,14 @@ class Kconfig():
                         self.configs[config]['default'].append({
                             m.group(1): m.group(2),
                         })
+                        continue
+
+                    # Config 'range' found
+                    m = re.match(r'^\s*range\s+(.*)$', line)
+                    if m:
+                        option = 'RANGE'
+                        self._log_line([section, option], line)
+                        self.configs[config]['range'].append(m.group(1))
                         continue
 
                 # -------------------------------------------------------------
