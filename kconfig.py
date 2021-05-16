@@ -360,8 +360,8 @@ class Kconfig():
                         self.configs[config]['select'].append(m.group(1))
                         continue
 
-                    # Config 'bool', 'string', 'int' or 'tristate' found
-                    m = re.match(r'^\s*(bool|string|int|tristate)(|\s+(.*))$',
+                    # Config 'bool', 'string', 'int', 'tristate' or 'hex' found
+                    m = re.match(r'^\s*(bool|string|int|tristate|hex)(|\s+(.*))$',
                                  line)
                     if m:
                         option = 'TYPE'
