@@ -371,13 +371,13 @@ class Kconfig():
                         continue
 
                     # Config 'def_bool', 'def_tristate' or 'default' found
-                    m = re.match(r'^\s*(def(_(bool|tristate)|ault))\s+(.*)$',
+                    m = re.match(r'^\s*(def_bool|def_tristate|default)\s+(.*)$',
                                  line)
                     if m:
                         option = 'DEFAULT'
                         self._log_line([section, option], line)
                         self.configs[config]['default'].append({
-                            m.group(1): m.group(4),
+                            m.group(1): m.group(2),
                         })
                         continue
 
