@@ -74,9 +74,12 @@ class Kconfig():
         self._kconfigs = {}
         self._read_kconfig(self.kconfig)
 
-    def _log_line(self, tokens, line):
+    def _log_line(self, tokens, line, warning=False):
         token = '[{}]'.format(':'.join([t.lower() for t in tokens]))
-        self.log.debug('%20s : %s', token, line)
+        if warning:
+            self.log.warning('%18s : %s', token, line)
+        else:
+            self.log.debug('%20s : %s', token, line)
 
     def _find_makefiles(self):
         """
@@ -418,11 +421,6 @@ class Kconfig():
                         continue
 
                 # -------------------------------------------------------------
-                # Sanity checks
-                if re.match(r'\s*source\s+', line):
-                    self.log.warning('[bug] : %s', line)
-
-                # -------------------------------------------------------------
                 # Unprocessed lines
                 if line:
-                    self._log_line(['ignored'], line)
+                    self._log_line([section, 'ignored'], line, warning=True)
