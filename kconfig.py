@@ -272,6 +272,7 @@ class Kconfig():
                         'prompt': '',
                         'depends_on': [],
                         'default': [],
+                        'type': [],
                     })
                     continue
 
@@ -312,6 +313,17 @@ class Kconfig():
                         option = 'HELP'
                         self._log_line([section, option], line)
                         help_indent = 0
+                        continue
+
+                    # Choice 'bool', 'string', 'int', 'tristate' or 'hex' found
+                    m = re.match(r'^\s*(bool|string|int|tristate|hex)(|\s+(.*))$',
+                                 line)
+                    if m:
+                        option = 'TYPE'
+                        self._log_line([section, option], line)
+                        self._choice[-1]['type'].append({
+                            m.group(1): m.group(3),
+                        })
                         continue
 
                 # -------------------------------------------------------------
