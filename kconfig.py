@@ -214,7 +214,8 @@ class Kconfig():
 
                 # -------------------------------------------------------------
                 # 'comment' found
-                if re.match(r'^comment\s+"[^"]+"', line):
+                if ((re.match(r'^\s*comment\s+"[^"]+"', line) or
+                     re.match(r"^comment\s+'[^']+'", line))):
                     section = 'COMMENT'
                     self._log_line([section], line)
                     continue
@@ -434,5 +435,6 @@ class Kconfig():
 
                 # -------------------------------------------------------------
                 # Unprocessed lines
+
                 if line:
                     self._log_line([section, 'ignored'], line, warning=True)
