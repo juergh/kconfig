@@ -15,10 +15,6 @@ SRCARCH = {
     'armhf': 'arm',
     'i386': 'x86',
     's390x': 's390',
-
-    # Kernel arches
-    's390': 's390',
-    'x86': 'x86',
 }
 
 def read_line(fh):
@@ -127,8 +123,8 @@ class Kconfig():
 
         # Assemble the full kconfig file path and replace environment variables
         source = os.path.join(self.ksource, kconfig)
-        source = source.replace('$(SRCARCH)', SRCARCH[self.arch])
-        source = source.replace('$SRCARCH', SRCARCH[self.arch])
+        source = source.replace('$(SRCARCH)', SRCARCH.get(self.arch, self.arch))
+        source = source.replace('$SRCARCH', SRCARCH.get(self.arch, self.arch))
 
         with open(source) as fh:
             token = 'NONE'
