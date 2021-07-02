@@ -63,6 +63,11 @@ def do_symbol_show(kconfig, args):
 def do_module_config_show(kconfig, args):
     print(kconfig.module_to_config(args.name) or '')
 
+@add_help('Show the config option that enables the provided module')
+@add_arg('name', help='Symbol name')
+def do_config_module_show(kconfig, args):
+    print(kconfig.config_to_module(args.name) or '')
+
 @add_help('Dump the symbol data to the screen')
 def do_dump(kconfig, _args):
     print(json.dumps(kconfig.symbols, indent=4))
