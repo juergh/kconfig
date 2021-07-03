@@ -55,15 +55,13 @@ class Kconfig():
         self.kconfig = kconfig
         self.arch = arch
         self.test = test
+        self.symbols = {}
 
         # Setup the logger
         logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S',
                             level=log_level)
-        self.log = logging.getLogger(__name__)
-
-        # The found symbols
-        self.symbols = {}
+        self._log = logging.getLogger(__name__)
 
         # The list of all makefiles
         self._makefiles = []
@@ -84,15 +82,15 @@ class Kconfig():
     def _log_line(self, tokens, line, warning=False):
         token = '[{}]'.format(':'.join([t.lower() for t in tokens]))
         if warning:
-            self.log.warning('%18s : %s', token, line)
+            self._log.warning('%18s : %s', token, line)
         else:
-            self.log.debug('%20s : %s', token, line)
+            self._log.debug('%20s : %s', token, line)
 
     def _find_makefiles(self):
         """
         Find all Makefiles and Kbuild files
         """
-        self.log.debug('Find Makefiles an Kbuild files')
+        self._log.debug('Find Makefiles an Kbuild files')
 
         result = []
         for path, _dirs, files in os.walk(self.ksource):
