@@ -75,9 +75,9 @@ class Kconfig():
         # 'choice' conditions
         self._choice = []
 
-        # Read and parse the Kconfig tree
+        # Parse the Kconfig tree
         self._kconfigs = {}
-        self._read_kconfig(self.kconfig)
+        self._parse_kconfig(self.kconfig)
 
     def _log_line(self, tokens, line, warning=False):
         token = '[{}]'.format(':'.join([t.lower() for t in tokens]))
@@ -148,10 +148,10 @@ class Kconfig():
                                             m.group(1).replace('.o', '.ko'))
         return None
 
-    def _read_kconfig(self, kconfig):
+    def _parse_kconfig(self, kconfig):
         """
-        Read (and parse) the provided kconfig file and recursively traverse all
-        included kconfig files as well.
+        Parse the provided kconfig file and recursively traverse all included kconfig files
+        as well.
         """
         # Prevent reading the same Kconfig multiple times
         if kconfig in self._kconfigs:
@@ -214,7 +214,7 @@ class Kconfig():
                     token = 'SOURCE'
                     option = 'NONE'
                     self._log_line([token], line)
-                    self._read_kconfig(m.group(1))
+                    self._parse_kconfig(m.group(1))
                     continue
 
                 # -------------------------------------------------------------
