@@ -111,43 +111,6 @@ class Kconfig():
         if m:
             print('{} | {} | {}'.format('RE_SOURCE', line, m.group(1)))
 
-    def module_to_config(self, module):
-        """
-        Return the config option that enables the provided kernel module
-        """
-        if not self._makefiles:
-            self._makefiles = self._find_makefiles()
-
-        for f in self._makefiles:
-            with open(os.path.join(self.ksource, f)) as fh:
-                for line in read_line(fh):
-                    m = re.match(r'obj-\$\(CONFIG_([^\)]+)\)\s*[+:]?=\s*(.*)',
-                                 line)
-                    if m:
-                        for o in m.group(2).split(' '):
-                            if o in (module + '.o',
-                                     module.replace('_', '-') + '.o',
-                                     module.replace('-', '_') + '.o'):
-                                return m.group(1)
-        return None
-
-    def config_to_module(self, config):
-        """
-        Return the kernel module that is enabled by the provided config option
-        """
-        if not self._makefiles:
-            self._makefiles = self._find_makefiles()
-
-        for f in self._makefiles:
-            with open(os.path.join(self.ksource, f)) as fh:
-                for line in read_line(fh):
-                    m = re.match(r'obj-\$\(CONFIG_{}\)\s*[+:]?=\s*([^\s]+)'.format(config),
-                                 line)
-                    if m and m.group(1).endswith('.o'):
-                        return os.path.join(os.path.dirname(f),
-                                            m.group(1).replace('.o', '.ko'))
-        return None
-
     def _parse_kconfig(self, kconfig):
         """
         Parse the provided kconfig file and recursively traverse all included kconfig files
@@ -475,3 +438,40 @@ class Kconfig():
 
                 if line:
                     self._log_line([token, 'ignored'], line, warning=True)
+
+    def module_to_config(self, module):
+        """
+        Return the config option that enables the provided kernel module
+        """
+        if not self._makefiles:
+            self._makefiles = self._find_makefiles()
+
+        for f in self._makefiles:
+            with open(os.path.join(self.ksource, f)) as fh:
+                for line in read_line(fh):
+                    m = re.match(r'obj-\$\(CONFIG_([^\)]+)\)\s*[+:]?=\s*(.*)',
+                                 line)
+                    if m:
+                        for o in m.group(2).split(' '):
+                            if o in (module + '.o',
+                                     module.replace('_', '-') + '.o',
+                                     module.replace('-', '_') + '.o'):
+                                return m.group(1)
+        return None
+
+    def config_to_module(self, config):
+        """
+        Return the kernel module that is enabled by the provided config option
+        """
+        if not self._makefiles:
+            self._makefiles = self._find_makefiles()
+
+        for f in self._makefiles:
+            with open(os.path.join(self.ksource, f)) as fh:
+                for line in read_line(fh):
+                    m = re.match(r'obj-\$\(CONFIG_{}\)\s*[+:]?=\s*([^\s]+)'.format(config),
+                                 line)
+                    if m and m.group(1).endswith('.o'):
+                        return os.path.join(os.path.dirname(f),
+                                            m.group(1).replace('.o', '.ko'))
+        return None
