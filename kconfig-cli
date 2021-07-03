@@ -72,6 +72,10 @@ def do_config_module_show(kconfig, args):
 def do_dump(kconfig, _args):
     print(json.dumps(kconfig.symbols, indent=4))
 
+@add_help('Test the different regex expressions')
+def do_test(_kconfig, _args):
+    pass
+
 # -----------------------------------------------------------------------------
 # Main entry point
 
@@ -119,5 +123,6 @@ if __name__ == '__main__':
 
     # Parse the Kconfig tree and call the subcommand
     kconfig = Kconfig(args.ksource, args.kconfig, args.arch,
-                      log_level=log_levels[args.log_level])
+                      log_level=log_levels[args.log_level],
+                      test=(args.subcommand == 'test'))
     args.func(kconfig, args)

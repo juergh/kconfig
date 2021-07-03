@@ -2,10 +2,20 @@
 #
 # A simple kernel Kconfig parser
 #
+# Loosly based on streamline_config.pl and checkkconfigsymbols.py from the
+# linux kernel source at https://git.kernel.org/. Kudos to the kernel
+# developers.
+#
 
 import logging
 import os
 import re
+
+# Regex expressions
+SOURCE =  r'^\s*source\s+"([^"]+)"\s*($|#)'
+
+# Regex objects
+RE_SOURCE = re.compile(SOURCE)
 
 # Mapping between Debian package and kernel source architecture names
 SRCARCH = {
@@ -40,10 +50,11 @@ def read_line(fh):
         yield line.replace('\t', ' ' * 8)
 
 class Kconfig():
-    def __init__(self, ksource, kconfig, arch, log_level=logging.INFO):
+    def __init__(self, ksource, kconfig, arch, log_level=logging.INFO, test=False):
         self.ksource = ksource
         self.kconfig = kconfig
         self.arch = arch
+        self.test = test
 
         # Setup the logger
         logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
@@ -90,6 +101,17 @@ class Kconfig():
                 if f in ('Makefile', 'Kbuild'):
                     result.append(os.path.join(rel_path, f))
         return result
+
+    def _test_regex(self, line):
+        """
+        Test the different regex expressions
+        """
+        if not line:
+            return
+
+        m = RE_SOURCE.match(line)
+        if m:
+            print('{} | {} | {}'.format('RE_SOURCE', line, m.group(1)))
 
     def module_to_config(self, module):
         """
@@ -150,6 +172,9 @@ class Kconfig():
             help_indent = 0
 
             for line in read_line(fh):
+                if self.test:
+                    self._test_regex(line)
+
                 # Determine the line indentation
                 line_indent = len(re.match(r'^(\s*)', line).group(1))
 
@@ -185,6 +210,16 @@ class Kconfig():
                             continue
 
                 # -------------------------------------------------------------
+                # Source included Kconfig file
+                m = RE_SOURCE.match(line)
+                if m:
+                    token = 'SOURCE'
+                    option = 'NONE'
+                    self._log_line([token], line)
+                    self._read_kconfig(m.group(1))
+                    continue
+
+                # -------------------------------------------------------------
                 # Ignore comments
                 if re.match(r'^\s*#', line):
                     self._log_line(['#'], line)
@@ -200,15 +235,6 @@ class Kconfig():
                 # Macro definition
                 if re.match(r'^\$\(.+\)', line):
                     self._log_line(['macro'], line)
-                    continue
-
-                # -------------------------------------------------------------
-                # Collect any Kconfig sources
-                m = re.match(r'^\s*source\s+"([^"]+)"', line)
-                if m:
-                    token = 'SOURCE'
-                    self._log_line([token], line)
-                    self._read_kconfig(m.group(1))
                     continue
 
                 # -------------------------------------------------------------
