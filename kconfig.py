@@ -50,7 +50,8 @@ def read_line(fh):
         yield line.replace('\t', ' ' * 8)
 
 class Kconfig():
-    def __init__(self, ksource, kconfig, arch, log_level=logging.INFO, test=False):
+    def __init__(self, ksource, kconfig, arch, log_level=logging.INFO,
+                 test=False):
         self.ksource = ksource
         self.kconfig = kconfig
         self.arch = arch
@@ -113,8 +114,8 @@ class Kconfig():
 
     def _parse_kconfig(self, kconfig):
         """
-        Parse the provided kconfig file and recursively traverse all included kconfig files
-        as well.
+        Parse the provided kconfig file and recursively traverse all included
+        kconfig files as well.
         """
         # Prevent reading the same Kconfig multiple times
         if kconfig in self._kconfigs:
