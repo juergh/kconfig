@@ -27,11 +27,11 @@ function run_test()
 			for mod in iwlwifi xt_tcpudp cmac intel_rapl_common \
 			           crct10dif_pclmul rapl wmi_bmof rc_core drm i2c_smbus \
 			           pinctrl_intel ; do
-				./kconfig-cli -s tests/linux module-config-show "${mod}"
+				./kconfig-cli -l 1 -s tests/linux module-config-show "${mod}"
 			done
 			;;
 		*)
-			./kconfig-cli -s tests/linux "${t}" > .result
+			./kconfig-cli -l 1 -s tests/linux "${t}" > .result
 			;;
 	esac > .result
 
