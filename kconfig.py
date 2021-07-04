@@ -12,10 +12,17 @@ import os
 import re
 
 # Regex expressions
-SOURCE =  r'^\s*source\s+"([^"]+)"\s*($|#)'
+# Note for self: (?:...) is a non-capturing group
+SYMBOL = r'(?:\w*[A-Z0-9]\w*){2,}'
+CONFIG = r'^\s*(?:menu)?config\s+(' + SYMBOL + r')\s*(?:$|#)'
 
 # Regex objects
-RE_SOURCE = re.compile(SOURCE)
+RE_COMMENT = re.compile(r'^\s*#')
+RE_SOURCE = re.compile(r'^\s*source\s+"([^"]+)"\s*(?:$|#)')
+RE_CONFIG = re.compile(CONFIG)
+RE_VARIABLE = re.compile(r'^(\S+)\s+:?=\s*(.*)')
+RE_MACRO = re.compile(r'^\$\(.+\)')
+RE_IF = re.compile(r'^if\s+(.*)$')
 
 # Mapping between Debian package and kernel source architecture names
 SRCARCH = {
@@ -26,6 +33,44 @@ SRCARCH = {
     'i386': 'x86',
     's390x': 's390',
 }
+
+def test_regex(line):
+    """
+    Test the different regex expressions
+    """
+    if not line:
+        return
+
+    m = RE_COMMENT.match(line)
+    if m:
+        print('{:10}: {}'.format('RE_COMMENT', line))
+        return
+
+    m = RE_SOURCE.match(line)
+    if m:
+        print('{:10}: {} | {}'.format('RE_SOURCE', line, m.group(1)))
+        return
+
+    m = RE_CONFIG.match(line)
+    if m:
+        print('{:10}: {} | {}'.format('RE_CONFIG', line, m.group(1)))
+        return
+
+    m = RE_VARIABLE.match(line)
+    if m:
+        print('{:10}: {} | {} | {}'.format('RE_VARIABLE', line, m.group(1),
+                                           m.group(2)))
+        return
+
+    m = RE_MACRO.match(line)
+    if m:
+        print('{:10}: {}'.format('RE_MACRO', line))
+        return
+
+    m = RE_IF.match(line)
+    if m:
+        print('{:10}: {} | {}'.format('RE_IF', line, m.group(1)))
+        return
 
 def read_line(fh):
     """
@@ -101,18 +146,7 @@ class Kconfig():
                     result.append(os.path.join(rel_path, f))
         return result
 
-    def _test_regex(self, line):
-        """
-        Test the different regex expressions
-        """
-        if not line:
-            return
-
-        m = RE_SOURCE.match(line)
-        if m:
-            print('{} | {} | {}'.format('RE_SOURCE', line, m.group(1)))
-
-    def _parse_kconfig(self, kconfig):
+    def _parse_kconfig(self, kconfig):  # pylint: disable=R0915
         """
         Parse the provided kconfig file and recursively traverse all included
         kconfig files as well.
@@ -135,7 +169,7 @@ class Kconfig():
 
             for line in read_line(fh):
                 if self.test:
-                    self._test_regex(line)
+                    test_regex(line)
 
                 # Determine the line indentation
                 line_indent = len(re.match(r'^(\s*)', line).group(1))
@@ -183,25 +217,25 @@ class Kconfig():
 
                 # -------------------------------------------------------------
                 # Ignore comments
-                if re.match(r'^\s*#', line):
+                if RE_COMMENT.match(line):
                     self._log_line(['#'], line)
                     continue
 
                 # -------------------------------------------------------------
                 # Variable assignment
-                if re.match(r'^\S+\s+(:)?=', line):
+                if RE_VARIABLE.match(line):
                     self._log_line(['variable'], line)
                     continue
 
                 # -------------------------------------------------------------
                 # Macro definition
-                if re.match(r'^\$\(.+\)', line):
+                if RE_MACRO.match(line):
                     self._log_line(['macro'], line)
                     continue
 
                 # -------------------------------------------------------------
                 # 'if' statement
-                m = re.match(r'^if\s+(.*)$', line)
+                m = RE_IF.match(line)
                 if m:
                     self._log_line(['if'], line)
                     self._if.append(m.group(1))
@@ -329,12 +363,12 @@ class Kconfig():
                         continue
 
                 # -------------------------------------------------------------
-                # Config found
-                m = re.match(r'^\s*(menu)?config\s+([0-9a-zA-Z_]+)', line)
+                # 'config' or "menuconfig' definition
+                m = RE_CONFIG.match(line)
                 if m:
                     token = 'CONFIG'
                     self._log_line([token], line)
-                    name = m.group(2)
+                    name = m.group(1)
                     # Initialize the config data hash
                     if name not in self.symbols:
                         self.symbols[name] = {
