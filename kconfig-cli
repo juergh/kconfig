@@ -59,9 +59,10 @@ def do_symbol_show(kconfig, args):
     print(json.dumps(kconfig.symbols[args.name], indent=4))
 
 @add_help('Show the config option that enables the provided module')
-@add_arg('name', help='Kernel module name')
+@add_arg('name', nargs='+', help='Kernel module name')
 def do_module_config_show(kconfig, args):
-    print(kconfig.module_to_config(args.name) or '')
+    for name in args.name:
+        print(kconfig.module_to_config(name) or '')
 
 @add_help('Show the config option that enables the provided module')
 @add_arg('name', help='Symbol name')
