@@ -372,6 +372,7 @@ class Kconfig():
                     # Initialize the config data hash
                     if name not in self.symbols:
                         self.symbols[name] = {
+                            'name': name,
                             'kconfig': [],
                             'help': [],
                             'depends_on': [],
@@ -510,3 +511,11 @@ class Kconfig():
                         return os.path.join(os.path.dirname(f),
                                             m.group(1).replace('.o', '.ko'))
         return None
+
+    def get_symbol(self, name):
+        """
+        Return symbol data
+        """
+        if name.startswith('CONFIG_'):
+            name = name[7:]
+        return self.symbols.get(name)
