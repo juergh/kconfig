@@ -453,6 +453,14 @@ class Kconfig():
                         self.symbols[name]['option'].append(m.group(1))
                         continue
 
+                    # Config 'modules' option found
+                    m = re.match(r'^\s*modules$', line)
+                    if m:
+                        option = 'OPTION'
+                        self._log_line([token, option], line)
+                        self.symbols[name]['option'].append('modules')
+                        continue
+
                     # Config 'imply' found
                     m = re.match(r'^\s*imply\s+(.*)$', line)
                     if m:
