@@ -158,9 +158,9 @@ def check_kconfig(kconfig, show):
 
             # Remaining keywords
             if re.search(r'^\t(' +
-                         r'(bool|hex|int|string|tristate)($| ")|' +
+                         r'(default|def_bool|depends on|imply|range|select) |' +
                          r'prompt "|' +
-                         r'(default|def_bool|depends on|imply|range|select) ' +
+                         r'(bool|hex|int|string|tristate)($| ")' +
                          r')', line):
                 cont_indent = '\t\t'
                 is_help = False
