@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+
+import argparse
+import re
+
+def fix_kconfig(kconfig):
+    data = []
+    ifs = []
+    menus = []
+    is_choice = False
+    help_indent = ''
+    help_first_indent = ''
+    prev_line = ''
+
+    with open(kconfig) as fh:
+        for line in fh:
+            line = line.rstrip()
+
+            # Drop multiple empty lines
+            if line == '' and prev_line == '':
+                continue
+            prev_line = line
+
+            # Add the line
+            data.append(line)
+
+            # Skip empty line or comment
+            if line == '' or re.search(r'^\t*#( |$)', line):
+                continue
+
+            # Replace 4 or more leading whitespaces with a single tab
+            if re.search(r'^[ ]{4,}', line):
+                line = re.sub(r'^[ ]+', '\t', line)
+                data[-1] = line
+
+            # Remove leading whitespaces
+            if re.search(r'^[ ]+\t', line):
+                line = re.sub(r'^[ ]+', '', line)
+                data[-1] = line
+
+            # Line indentation
+            m = re.search(r'^([\t ]+)', line)
+            indent = m.group(1) if m else ''
+
+            # -----------------------------------------------------------------
+            # 1st level
+
+            # if
+            m = re.search(r'^if (.*)$', line)
+            if m:
+                help_indent = ''
+                ifs.append(m.group(1).strip())
+                continue
+
+            # endif
+            if line.startswith('endif'):
+                help_indent = ''
+                data[-1] = 'endif # ' + ifs.pop()
+                continue
+
+            # menu
+            m = re.search(r'^menu (.*)$', line)
+            if m:
+                help_indent = ''
+                menus.append(m.group(1).strip())
+                continue
+
+            # endmenu
+            if line.startswith('endmenu'):
+                help_indent = ''
+                data[-1] = 'endmenu # ' + menus.pop()
+                continue
+
+            # choice
+            if line == 'choice':
+                help_indent = ''
+                is_choice = True
+                continue
+
+            # endchoice
+            if line == 'endchoice':
+                help_indent = ''
+                is_choice = False
+                continue
+
+            # Remaining keywords
+            if re.search(r'^(' +
+                         r'(config|menuconfig|depends on) |' +
+                         r'(source|comment|mainmenu) "' +
+                         r')', line):
+                help_indent = ''
+                continue
+
+            # -----------------------------------------------------------------
+            # 2nd level
+
+            # help
+            if line == '\thelp':
+                help_indent = '\t  '
+                help_first_indent = ''
+                continue
+
+            # Remaining keywords
+            if re.search(r'^\t(' +
+                         r'(config|default|def_bool|depends_on|imply|range|select) |' +
+                         r'prompt "|' +
+                         r'(bool|hex|int|string)($| )' +
+                         r')', line):
+                help_indent = ''
+                continue
+
+            # -----------------------------------------------------------------
+            # 3rd level
+
+            if is_choice:
+
+                # help
+                if line == '\t\thelp':
+                    help_indent = '\t\t  '
+                    help_first_indent = ''
+                    continue
+
+                # Remaining keywords
+                if re.search(r'^\t\t(' +
+                             r'bool($| )|' +
+                             r'(depends_on|select) ' +
+                             r')', line):
+                    help_indent = ''
+                    continue
+
+            # -----------------------------------------------------------------
+            # Help text
+
+            if help_indent:
+                if not help_first_indent:
+                    help_first_indent = indent
+                if indent == help_indent:
+                    continue
+                if indent == help_first_indent:
+                    data[-1] = help_indent + line[len(indent):]
+                    continue
+                if ((help_indent == '\t  ' and help_first_indent == '\t  ' and
+                     indent == '\t\t')):
+                    continue
+                if ((help_indent == '\t\t  ' and help_first_indent == '\t\t  ' and
+                     indent == '\t\t')):
+                    continue
+                # if re.search(r'{} +'.format(help_indent), line):
+                #     continue
+                data[-1] = 'hh' + line
+                continue
+
+    return data
+
+parser = argparse.ArgumentParser()
+parser.add_argument('kconfig', nargs='+')
+args = parser.parse_args()
+
+for kconfig in args.kconfig:
+    fixed = fix_kconfig(kconfig)
+    with open(kconfig, 'w') as fh:
+        for line in fixed:
+            fh.write(line + '\n')
