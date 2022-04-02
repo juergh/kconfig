@@ -131,8 +131,8 @@ def check_kconfig(kconfig, show):
 
             # Remaining 0. level keywords
             if re.search(r'^(' +
-                         r'config |menuconfig |depends on |' +
-                         r'source "|comment "|mainmenu "' +
+                         r'(config|menuconfig|depends on) |' +
+                         r'(source|comment|mainmenu) "' +
                          r')', line):
                 is_help = False
                 print_line(['a'], show, '    ', line)
@@ -160,7 +160,7 @@ def check_kconfig(kconfig, show):
             if re.search(r'^\t(' +
                          r'(bool|hex|int|string|tristate)($| ")|' +
                          r'prompt "|' +
-                         r'default |depends on |select |def_bool |range |imply ' +
+                         r'(default|def_bool|depends on|imply|range|select) ' +
                          r')', line):
                 cont_indent = '\t\t'
                 is_help = False
@@ -182,7 +182,7 @@ def check_kconfig(kconfig, show):
 
                 if re.search(r'^\t\t(' +
                              r'bool($| ")|' +
-                             r'depends on |select ' +
+                             r'(depends on|select) ' +
                              r')', line):
                     cont_indent = '\t\t\t'
                     is_help = False
