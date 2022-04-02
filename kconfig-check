@@ -53,7 +53,7 @@ def check_kconfig(kconfig, show):
                 continue
 
             # -----------------------------------------------------------------
-            # 0. level keywords
+            # 1st level keywords
 
             # if <EXPR>
             m = re.search(r'^if (.+)$', line)
@@ -129,7 +129,7 @@ def check_kconfig(kconfig, show):
                 print_line(['a', 'c'], show, 'CC  ', line)
                 continue
 
-            # Remaining 0. level keywords
+            # Remaining keywords
             if re.search(r'^(' +
                          r'(config|menuconfig|depends on) |' +
                          r'(source|comment|mainmenu) "' +
@@ -139,7 +139,7 @@ def check_kconfig(kconfig, show):
                 continue
 
             # -----------------------------------------------------------------
-            # 1. level keywords
+            # 2nd level keywords
 
             # help
             if line == '\thelp':
@@ -156,7 +156,7 @@ def check_kconfig(kconfig, show):
                 print_line(['a'], show, '    ', line)
                 continue
 
-            # Remaining 1. level keywords
+            # Remaining keywords
             if re.search(r'^\t(' +
                          r'(bool|hex|int|string|tristate)($| ")|' +
                          r'prompt "|' +
@@ -168,7 +168,7 @@ def check_kconfig(kconfig, show):
                 continue
 
             # -----------------------------------------------------------------
-            # 2. level keywords
+            # 3rd level keywords
 
             if is_choice:
 
@@ -180,6 +180,7 @@ def check_kconfig(kconfig, show):
                     print_line(['a'], show, '    ', line)
                     continue
 
+                # Remaining keywords
                 if re.search(r'^\t\t(' +
                              r'bool($| ")|' +
                              r'(depends on|select) ' +
