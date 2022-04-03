@@ -15,8 +15,8 @@ def check_kconfig(kconfig, show):
 
     is_choice = False
     is_help = False
-    help_is_indent = ''
-    help_must_indent = ''
+    help_indent = ''
+    help_first_indent = ''
 
     prev_cont = False
     cont = False
@@ -50,12 +50,15 @@ def check_kconfig(kconfig, show):
             if cont_indent:
                 if indent == cont_indent:
                     print_line(['a'], show, '    ', line)
-                elif indent.startswith(cont_indent):
+                    continue
+
+                if indent.startswith(cont_indent):
                     reval = 1
                     print_line(['a', 'l'], show, 'll  ', line)
-                else:
-                    reval = 1
-                    print_line(['a', 'l'], show, 'LL  ', line)
+                    continue
+
+                reval = 1
+                print_line(['a', 'l'], show, 'LL  ', line)
                 continue
 
             # -----------------------------------------------------------------
@@ -75,9 +78,10 @@ def check_kconfig(kconfig, show):
                 is_help = False
                 if m.group(1) == ifs.pop():
                     print_line(['a'], show, '    ', line)
-                else:
-                    retval = 1
-                    print_line(['a', 'i'], show, 'II  ', line)
+                    continue
+
+                retval = 1
+                print_line(['a', 'i'], show, 'II  ', line)
                 continue
 
             # if|endif
@@ -101,9 +105,10 @@ def check_kconfig(kconfig, show):
                 is_help = False
                 if m.group(1) == menus.pop():
                     print_line(['a'], show, '    ', line)
-                else:
-                    retval = 1
-                    print_line(['a', 'm'], show, 'MM  ', line)
+                    continue
+
+                retval = 1
+                print_line(['a', 'm'], show, 'MM  ', line)
                 continue
 
             # menu|endmenu
@@ -150,8 +155,8 @@ def check_kconfig(kconfig, show):
             # help
             if line == '\thelp':
                 is_help = True
-                help_is_indent = ''
-                help_must_indent = '\t  '
+                help_indent = '\t  '
+                help_first_indent = ''
                 print_line(['a'], show, '    ', line)
                 continue
 
@@ -181,8 +186,8 @@ def check_kconfig(kconfig, show):
                 # help
                 if line == '\t\thelp':
                     is_help = True
-                    help_is_indent = ''
-                    help_must_indent = '\t\t  '
+                    help_indent = '\t\t  '
+                    help_first_indent = ''
                     print_line(['a'], show, '    ', line)
                     continue
 
@@ -200,16 +205,29 @@ def check_kconfig(kconfig, show):
             # Help text
 
             if is_help:
-                if not help_is_indent:
-                    help_is_indent = indent
-                if help_is_indent != help_must_indent:
+                if not help_first_indent:
+                    # First help line
+                    help_first_indent = indent
+                    if indent == help_indent:
+                        print_line(['a'], show, '    ', line)
+                        continue
+
                     retval = 1
                     print_line(['a', 'h'], show, 'HH  ', line)
-                elif indent != help_must_indent:
+                    continue
+
+                if indent == help_indent:
+                    print_line(['a'], show, '    ', line)
+                    continue
+
+                if ((indent.startswith(help_indent) or
+                     indent.startswith(help_indent[:-2] + '\t'))):
                     retval = 1
                     print_line(['a', 'h'], show, 'hh  ', line)
-                else:
-                    print_line(['a'], show, '    ', line)
+                    continue
+
+                retval = 1
+                print_line(['a', 'h'], show, 'HH  ', line)
                 continue
 
             # -----------------------------------------------------------------
