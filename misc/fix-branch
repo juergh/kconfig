@@ -1,0 +1,16 @@
+#!/bin/bash -eu
+
+here=$(dirname "${0}")
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+path=${branch#kconfig_}
+path=${path//_//}
+
+for f in "${path}"/Kconfig* ; do
+	if ! [ -e "${f}" ] ; then
+		continue
+	fi
+	echo "${f}"
+	"${here}"/../kconfig-fix "${f}" || true
+done

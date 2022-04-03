@@ -1,0 +1,18 @@
+#!/bin/bash -eu
+
+f=${1}
+
+git add "${f}"
+git commit -m "${f}: Kconfig: Fix indentation and add comments to ending statements
+
+The convention for indentation seems to be a single tab. Help text is
+further indented by an additional two whitespaces. Fix the lines that
+violate these rules.
+
+While add it, add trailing comments to endif and endmenu statements for
+better readability.
+
+Signed-off-by: Juerg Haefliger <juergh@canonical.com>
+"
+
+git commit --amend

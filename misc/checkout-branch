@@ -1,0 +1,6 @@
+#!/bin/bash -eu
+
+f=${1}
+
+branch=kconfig_${f//\//_}
+git checkout -b "${branch}" kconfig-base

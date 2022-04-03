@@ -1,0 +1,7 @@
+#!/bin/bash -eu
+
+while IFS= read -r branch ; do
+	branch=${branch##* }
+	git switch "${branch}"
+	git rebase -i kconfig-base
+done < <(git branch | grep -E '\*? +kconfig_')

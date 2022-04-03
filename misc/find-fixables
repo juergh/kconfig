@@ -1,0 +1,18 @@
+#!/bin/bash -eu
+
+here=$(dirname "${0}")
+
+path=${1}
+
+readarray -t dirs < <(find "${path}" -name 'Kconfig*' -print0 |
+						  xargs -0 -i'{}' dirname {} | sort -u)
+
+for d in "${dirs[@]}" ; do
+	branch=kconfig_${d//\//_}
+	if git rev-parse --quiet --verify "${branch}" >/dev/null ; then
+		continue
+	fi
+	echo
+	echo "${d}"
+	"${here}"/../kconfig-check -s hqwx "${d}"/Kconfig* || true
+done

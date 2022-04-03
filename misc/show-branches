@@ -1,0 +1,14 @@
+#!/bin/bash -eu
+
+if [ $# -eq 0 ] ; then
+	opts=("--oneline" "--no-decorate")
+else
+	opts=("$@")
+fi
+
+while IFS= read -r branch ; do
+	branch=${branch##* }
+	echo
+	echo "-- ${branch} --"
+	git --no-pager log --color=always "${opts[@]}" kconfig-base.."${branch}"
+done < <(git branch | grep -E '\*? +kconfig_')

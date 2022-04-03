@@ -1,0 +1,10 @@
+#!/bin/bash -eu
+
+here=$(dirname "${0}")
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+path=${branch#kconfig_}
+path=${path//_//}
+
+"${here}"/../kconfig-check "${path}"/Kconfig* || true
