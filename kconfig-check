@@ -47,9 +47,15 @@ def check_kconfig(kconfig, show):
             # -----------------------------------------------------------------
             # Continued lines
 
-            if ((cont_indent and
-                 re.search(r'^{}[^\t]'.format(cont_indent), line))):
-                print_line(['a'], show, '    ', line)
+            if cont_indent:
+                if indent == cont_indent:
+                    print_line(['a'], show, '    ', line)
+                elif indent.startswith(cont_indent):
+                    reval = 1
+                    print_line(['a', 'l'], show, 'll  ', line)
+                else:
+                    reval = 1
+                    print_line(['a', 'l'], show, 'LL  ', line)
                 continue
 
             # -----------------------------------------------------------------
@@ -238,18 +244,20 @@ are prefixed with two capital letters that identify the detected issue:
   CC: choice/endchoice formatting
   HH: Help text indentation
   II: if/endif formatting
+  LL: Continued line indentation
   MM: menu/endmenu formatting
   QQ: Wrong quotes
   WW: Leading whitespace(s)
   XX: Unspecified indentation/formatting issue
 ''', formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('kconfig', nargs='+', help='kernel Kconfig file')
-parser.add_argument('-s', '--show', default='chimqwx',
+parser.add_argument('-s', '--show', default='chilmqwx',
                     help='''
 show only lines with specific issues:
   c: choice/endchoice
   h: help text
   i: if/endif
+  l: line continuation
   m: menu/endmenu
   q: quotes
   w: whitespace(s)
