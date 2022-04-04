@@ -1,5 +1,17 @@
 #!/bin/bash -eu
 
+function usage()
+{
+	cat <<EOF
+Usage: $(basename "${0}") [-c] [-h] [-l]
+
+Optional arguments:
+  -c, --compare  Compare output against saved output.
+  -h, --help     Show this help text and exit.
+  -s, --save     Save the output.
+EOF
+}
+
 here=$(dirname "${0}")
 
 branch=$(git rev-parse --abbrev-ref HEAD)
@@ -7,4 +19,26 @@ branch=$(git rev-parse --abbrev-ref HEAD)
 path=${branch#kconfig_}
 path=${path//_//}
 
-"${here}"/../kconfig-check "${path}"/Kconfig* || true
+case "${1:-}" in
+	"")
+		"${here}"/../kconfig-check "${path}"/Kconfig*
+		;;
+	-c|--compare)
+		"${here}"/../kconfig-check "${path}"/Kconfig* > \
+			.kconfig-check/tmp 2>&1 || true
+		diff .kconfig-check/tmp .kconfig-check/"${branch}"
+		;;
+	-h|--help)
+		usage
+		exit
+		;;
+	-s|--save)
+		mkdir -p .kconfig-check
+		"${here}"/../kconfig-check "${path}"/Kconfig* 2>&1 | \
+			tee .kconfig-check/"${branch}"
+		;;
+	*)
+		usage
+		exit 2
+		;;
+esac

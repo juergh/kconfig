@@ -1,11 +1,34 @@
 #!/bin/bash -eu
 
+function usage()
+{
+	cat <<EOF
+Usage: $(basename "${0}") [-c] [-h] [-l]
+
+Optional arguments:
+  -c, --compare  Compare output against saved output.
+  -h, --help     Show this help text and exit.
+  -s, --save     Save the output.
+EOF
+}
+
+case "${1:-}" in
+	-h|--help)
+		usage
+		exit
+		;;
+esac
+
 here=$(dirname "${0}")
+
+retval=0
 
 while IFS= read -r branch ; do
 	branch=${branch##* }
     echo
     echo "-- ${branch} --"
-	git switch "${branch}" >/dev/null
-	"${here}"/kconfig-check-branch
+	git switch -q "${branch}"
+	"${here}"/kconfig-check-branch "${@}" || retval=1
 done < <(git branch | grep -E '\*? +kconfig_')
+
+exit "${retval}"
