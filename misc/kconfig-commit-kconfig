@@ -3,7 +3,7 @@
 f=${1}
 
 git add "${f}"
-git commit -m "${f}: Kconfig: Fix indentation and add comments to ending statements
+git commit -m "${f}: Kconfig: Fix indentation and add comments
 
 The convention for indentation seems to be a single tab. Help text is
 further indented by an additional two whitespaces. Fix the lines that
