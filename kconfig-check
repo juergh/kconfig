@@ -169,7 +169,7 @@ def check_kconfig(kconfig, show):
 
             # Remaining keywords
             if re.search(r'^\t(' +
-                         r'(default|def_bool|depends on|imply|range|select) |' +
+                         r'(default|def_bool|depends on|imply|range|select) [^\']|' +
                          r'prompt "|' +
                          r'(bool|hex|int|string|tristate)($| ")' +
                          r')', line):
@@ -193,8 +193,8 @@ def check_kconfig(kconfig, show):
 
                 # Remaining keywords
                 if re.search(r'^\t\t(' +
-                             r'bool($| ")|' +
-                             r'(depends on|select) ' +
+                             r'(depends on|select) [^\']|' +
+                             r'bool($| ")' +
                              r')', line):
                     cont_indent = '\t\t\t'
                     is_help = False
@@ -233,7 +233,7 @@ def check_kconfig(kconfig, show):
             # -----------------------------------------------------------------
             # Wrong quotes
 
-            if re.search(r'^\t(hex|bool) \'', line):
+            if re.search(r'^\t(hex|bool|default) \'', line):
                 is_help = False
                 retval = 1
                 print_line(['a', 'q'], show, 'QQ  ', line)
