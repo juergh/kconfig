@@ -1,5 +1,7 @@
 #!/bin/bash -eu
 
+function pr_orange() { echo -e "\033[93m${*}\033[0m" ; }
+
 here=$(dirname "${0}")
 
 path=${1}
@@ -12,7 +14,6 @@ for d in "${dirs[@]}" ; do
 	if git rev-parse --quiet --verify "${branch}" >/dev/null ; then
 		continue
 	fi
-	echo
-	echo "${d}"
-	"${here}"/../kconfig-check -s hqwx "${d}"/Kconfig* || true
+	pr_orange "DIR: ${d}"
+	"${here}"/../kconfig-check -n -s hqwx "${d}"/Kconfig* || true
 done
