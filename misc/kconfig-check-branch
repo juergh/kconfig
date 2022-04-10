@@ -21,10 +21,10 @@ path=${path//_//}
 
 case "${1:-}" in
 	"")
-		"${here}"/../kconfig-check "${path}"/Kconfig*
+		"${here}"/../kconfig-check -n "${path}"/Kconfig*
 		;;
 	-c|--compare)
-		"${here}"/../kconfig-check "${path}"/Kconfig* > \
+		"${here}"/../kconfig-check -n "${path}"/Kconfig* > \
 			.kconfig-check/tmp 2>&1 || true
 		diff .kconfig-check/tmp .kconfig-check/"${branch}"
 		;;
@@ -34,7 +34,7 @@ case "${1:-}" in
 		;;
 	-s|--save)
 		mkdir -p .kconfig-check
-		"${here}"/../kconfig-check "${path}"/Kconfig* 2>&1 | \
+		"${here}"/../kconfig-check -n "${path}"/Kconfig* 2>&1 | \
 			tee .kconfig-check/"${branch}"
 		;;
 	*)
