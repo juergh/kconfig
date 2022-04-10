@@ -284,17 +284,14 @@ show only lines with specific issues:
   a: show all lines
 default is 'chimqwx'
 ''')
+parser.add_argument('-n', '--show-name', action='store_true',
+                    help='Show the Kconfig filename')
 args = parser.parse_args()
 
-first = True
 retval = 0
 for kconfig in args.kconfig:
-    if len(args.kconfig) > 1:
-        if first:
-            first = False
-        else:
-            print()
-        print('-- ' + kconfig + ' --')
+    if args.show_name or len(args.kconfig) > 1:
+        print('\033[94m' + 'FILE: ' + kconfig + '\033[0m')
     retval |= check_kconfig(kconfig, args.show)
 
 sys.exit(retval)
