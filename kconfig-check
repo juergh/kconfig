@@ -171,6 +171,7 @@ def check_kconfig(kconfig, show):
             if re.search(r'^\t(' +
                          r'(default|def_bool|depends on|imply|range|select) [^\']|' +
                          r'prompt "|' +
+                         r'def_tristate (y|n|m)|' +
                          r'(bool|hex|int|string|tristate)($| ")' +
                          r')', line):
                 cont_indent = '\t\t'
