@@ -1,7 +1,36 @@
 #!/bin/bash -eu
 
+function usage()
+{
+	cat <<EOF
+Usage: $(basename "${0}") interactive|upstream
+EOF
+}
+
+if [ ${#} -ne 1 ] ; then
+	usage
+	exit 2
+fi
+
+fetched=0
 while IFS= read -r branch ; do
 	branch=${branch##* }
-	git switch "${branch}"
-	git rebase -i kconfig-base
+	case "${1}" in
+		"interactive")
+			git switch "${branch}"
+			git rebase -i kconfig-base
+			;;
+		"upstream")
+			if [ ${fetched} -eq 0 ] ; then
+				git fetch upstream
+				git tag -f kconfig-base upstream/master
+				fetched=1
+			fi
+			git rebase kconfig-base "${branch}"
+			;;
+		*)
+			usage
+			exit 1
+			;;
+	esac
 done < <(git branch | grep -E '\*? +kconfig_')

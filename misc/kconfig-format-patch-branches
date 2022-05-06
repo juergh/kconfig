@@ -1,0 +1,81 @@
+#!/bin/bash -eu
+
+function pr_orange() { echo -e "\033[93m${*}\033[0m" ; }
+
+function out()
+{
+	local rc=${?}
+
+	trap - EXIT INT TERM HUP
+
+	if [ "${rc}" -ne 0 ] ; then
+		echo "Error: Script failed" >&2
+	fi
+
+	return "${rc}"
+}
+
+trap out EXIT INT TERM HUP
+
+export GIT_AUTHOR_EMAIL="juergh@canonical.com"
+export GIT_COMMITTER_EMAIL=${GIT_AUTHOR_EMAIL}
+
+while IFS= read -r branch ; do
+	branch=${branch##* }
+	pr_orange "BRANCH: ${branch}"
+	git switch -q "${branch}"
+
+	#	git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=juergh@canonical.com; GIT_COMMITTER_EMAIL=$GIT_AUTHOR_EMAIL;' kconfig-base..
+	#	git filter-branch -f --msg-filter 'sed "s/juergh@protonmail.com/juergh@canonical.com/"' kconfig-base..
+
+	d=.kconfig-check/${branch}.d
+	rm -rf "${d}"
+	mkdir -p "${d}"
+
+	# Run git format-patch
+	if [ "$(git log --oneline kconfig-base.. | wc -l)" -gt 1 ] ; then
+		git format-patch --cover-letter -o "${d}" kconfig-base..
+
+		# Determine the subject and body of the cover letter
+		subject=""
+		while IFS= read -r line ; do
+			if [ -z "${subject}" ] ; then
+				subject="${line%% Kconfig*} Kconfig: Style cleanups"
+			fi
+		done < <(git log --format=%s --reverse kconfig-base..)
+
+		# Fill in the cover letter
+		while IFS= read -r line ; do
+			case "${line}" in
+				*"*** SUBJECT HERE ***"*)
+					echo "${line%% \*\*\* *} ${subject}"
+					;;
+				*"*** BLURB HERE ***"*)
+					cat <<EOF
+The majority of the Kconfig files use a single tab for basic indentation
+and a single tab followed by two whitespaces for help text indentation.
+Fix the lines that don't follow this convention.
+EOF
+					;;
+				*)
+					echo "${line}"
+					;;
+			esac
+		done < <(cat "${d}"/0000-cover-letter.patch) > .tmp
+		mv .tmp "${d}"/0000-cover-letter.patch
+	else
+		git format-patch -o "${d}" kconfig-base..
+	fi
+
+	# Run checkpatch.pl
+	args=()
+	if [ "${branch}" = "kconfig_arch_powerpc_platforms_8xx" ] ; then
+		args=("--min-conf-desc-length=0")
+	fi
+	./scripts/checkpatch.pl "${args[@]}" "${d}"/*.patch
+
+	# Run get_maintainer.pl
+	./scripts/get_maintainer.pl --remove-duplicates "${d}"/*.patch | \
+		tee "${d}"/get_maintainer
+
+done < <(git branch | grep -E '\*? +kconfig_')

@@ -1,6 +1,15 @@
 #!/bin/bash -eu
 
-f=${1}
+d=${1%/}
 
-branch=kconfig_${f//\//_}
+if ! [ -d "${d}" ] ; then
+	d=${d%/*}
+fi
+
+if ! [ -d "${d}" ] ; then
+	echo "No such directory: ${d}" >&2
+	exit 1
+fi
+
+branch=kconfig_${d//\//_}
 git checkout -b "${branch}" kconfig-base
