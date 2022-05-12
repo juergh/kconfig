@@ -496,12 +496,12 @@ class Kconfig():
                     m = re.match(r'obj-\$\(CONFIG_([^\)]+)\)\s*[+:]?=\s*(.*)',
                                  line)
                     if m:
-                        for o in m.group(2).split(' '):
-                            if o in (module + '.o',
+                        for g in m.group(2).split(' '):
+                            if g in (module + '.o',
                                      module.replace('_', '-') + '.o',
                                      module.replace('-', '_') + '.o'):
                                 return m.group(1)
-        return None
+        return ''
 
     def symbol_to_module(self, symbol):
         """
@@ -510,15 +510,18 @@ class Kconfig():
         if not self._makefiles:
             self._makefiles = self._find_makefiles()
 
+        result = []
         for f in self._makefiles:
             with open(os.path.join(self.ksource, f)) as fh:
                 for line in read_line(fh):
-                    m = re.match(r'obj-\$\(CONFIG_{}\)\s*[+:]?=\s*([^\s]+)'.format(symbol),
+                    m = re.match(r'obj-\$\(CONFIG_{}\)\s*[+:]?=\s*(.*)'.format(symbol),
                                  line)
-                    if m and m.group(1).endswith('.o'):
-                        return os.path.join(os.path.dirname(f),
-                                            m.group(1).replace('.o', '.ko'))
-        return None
+                    if m:
+                        for g in m.group(1).split(' '):
+                            if g.endswith('.o'):
+                                result.append(os.path.join(os.path.dirname(f),
+                                              g.replace('.o', '.ko')))
+        return result
 
     def get_symbol(self, name):
         """

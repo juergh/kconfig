@@ -74,12 +74,12 @@ def do_symbol_show(kconfig, args):
 @add_arg('name', nargs='+', help='Kernel module name')
 def do_module_show_symbol(kconfig, args):
     for name in args.name:
-        print(kconfig.module_to_symbol(name) or '')
+        print(kconfig.module_to_symbol(name))
 
 @add_help('Show the module that is enabled by the provided symbol')
 @add_arg('name', help='Symbol name')
 def do_symbol_show_module(kconfig, args):
-    print(kconfig.symbol_to_module(args.name) or '')
+    print(json.dumps(kconfig.symbol_to_module(args.name), indent=4))
 
 @add_help('Dump the symbol data to the screen')
 def do_dump(kconfig, _args):
