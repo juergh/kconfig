@@ -70,16 +70,16 @@ def do_symbol_show(kconfig, args):
         sys.exit(1)
     print(json.dumps(kconfig.symbols[args.name], indent=4))
 
-@add_help('Show the config option that enables the provided module')
+@add_help('Show the symbol that enables the provided module')
 @add_arg('name', nargs='+', help='Kernel module name')
-def do_module_config_show(kconfig, args):
+def do_module_show_symbol(kconfig, args):
     for name in args.name:
-        print(kconfig.module_to_config(name) or '')
+        print(kconfig.module_to_symbol(name) or '')
 
-@add_help('Show the config option that enables the provided module')
+@add_help('Show the module that is enabled by the provided symbol')
 @add_arg('name', help='Symbol name')
-def do_config_module_show(kconfig, args):
-    print(kconfig.config_to_module(args.name) or '')
+def do_symbol_show_module(kconfig, args):
+    print(kconfig.symbol_to_module(args.name) or '')
 
 @add_help('Dump the symbol data to the screen')
 def do_dump(kconfig, _args):

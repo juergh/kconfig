@@ -483,9 +483,9 @@ class Kconfig():
                 if line:
                     self._log_line([token, 'ignored'], line, warning=True)
 
-    def module_to_config(self, module):
+    def module_to_symbol(self, module):
         """
-        Return the config option that enables the provided kernel module
+        Return the symbol that enables the provided kernel module
         """
         if not self._makefiles:
             self._makefiles = self._find_makefiles()
@@ -503,9 +503,9 @@ class Kconfig():
                                 return m.group(1)
         return None
 
-    def config_to_module(self, config):
+    def symbol_to_module(self, symbol):
         """
-        Return the kernel module that is enabled by the provided config option
+        Return the kernel module that is enabled by the provided symbol
         """
         if not self._makefiles:
             self._makefiles = self._find_makefiles()
@@ -513,7 +513,7 @@ class Kconfig():
         for f in self._makefiles:
             with open(os.path.join(self.ksource, f)) as fh:
                 for line in read_line(fh):
-                    m = re.match(r'obj-\$\(CONFIG_{}\)\s*[+:]?=\s*([^\s]+)'.format(config),
+                    m = re.match(r'obj-\$\(CONFIG_{}\)\s*[+:]?=\s*([^\s]+)'.format(symbol),
                                  line)
                     if m and m.group(1).endswith('.o'):
                         return os.path.join(os.path.dirname(f),
