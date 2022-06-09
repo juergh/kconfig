@@ -3,7 +3,7 @@
 function usage()
 {
 	cat <<EOF
-Usage: $(basename "${0}") interactive|upstream
+Usage: $(basename "${0}") interactive|upstream|linux-next
 EOF
 }
 
@@ -16,14 +16,14 @@ fetched=0
 while IFS= read -r branch ; do
 	branch=${branch##* }
 	case "${1}" in
-		"interactive")
+		interactive)
 			git switch "${branch}"
 			git rebase -i kconfig-base
 			;;
-		"upstream")
+		upstream|linux-next)
 			if [ ${fetched} -eq 0 ] ; then
-				git fetch upstream
-				git tag -f kconfig-base upstream/master
+				git fetch "${1}"
+				git tag -f kconfig-base "${1}"/master
 				fetched=1
 			fi
 			git rebase kconfig-base "${branch}"
