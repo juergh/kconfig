@@ -2,14 +2,10 @@
 
 function pr_orange() { echo -e "\033[93m${*}\033[0m" ; }
 
-if [ $# -eq 0 ] ; then
-	opts=("--oneline" "--no-decorate")
-else
-	opts=("$@")
-fi
-
 while IFS= read -r branch ; do
 	branch=${branch##* }
+	echo
 	pr_orange "BRANCH: ${branch}"
-	git --no-pager log --color=always "${opts[@]}" kconfig-base.."${branch}"
+	git --no-pager log --color=always --no-decorate "${@}" \
+		kconfig-base.."${branch}"
 done < <(git branch | grep -E '\*? +kconfig_')
