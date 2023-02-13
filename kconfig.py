@@ -483,6 +483,25 @@ class Kconfig():
                 if line:
                     self._log_line([token, 'ignored'], line, warning=True)
 
+    def _search_symbols(self, key, vals):
+        """
+        Search and return symbols containing key 'key' with any value of 'vals'
+        """
+        result = {}
+        for name, symbol in self.symbols.items():
+            svals = symbol[key]
+            for sval in svals:
+                for val in vals:
+                    if re.match(r'\b{}\b'.format(val), sval):
+                        result[name] = symbol
+                        break
+                if name in result:
+                    break
+        return result
+
+    # -------------------------------------------------------------------------
+    # Public methods
+
     def module_to_symbol(self, module):
         """
         Return the symbol that enables the provided kernel module
@@ -530,3 +549,14 @@ class Kconfig():
         if name.startswith('CONFIG_'):
             name = name[7:]
         return self.symbols.get(name)
+
+    def search_symbols(self, **kwargs):
+        """
+        Search and return symbols
+        """
+        result = {}
+        for key in ('depends_on', 'imply', 'select'):
+            vals = kwargs.get(key)
+            if vals:
+                result |= self._search_symbols(key, vals)
+        return result

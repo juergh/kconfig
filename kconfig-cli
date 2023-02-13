@@ -81,6 +81,12 @@ def do_module_show_symbol(kconfig, args):
 def do_symbol_show_module(kconfig, args):
     print(json.dumps(kconfig.symbol_to_module(args.name), indent=4))
 
+@add_help('Search symbols')
+@add_arg('--select', nargs='*')
+@add_arg('--depends-on', nargs='*')
+def do_search_symbols(kconfig, args):
+    print(json.dumps(kconfig.search_symbols(**vars(args)), indent=4))
+
 @add_help('Dump the symbol data to the screen')
 def do_dump(kconfig, _args):
     print(json.dumps(kconfig.symbols, indent=4))
