@@ -22,12 +22,12 @@ function run_test()
 
 	# Run the tests
 	case "${t}" in
-		module-config-show)
+		module-show-symbol)
 			# Test a random collection of modules
 			for mod in iwlwifi xt_tcpudp cmac intel_rapl_common \
 			           crct10dif_pclmul rapl wmi_bmof rc_core drm i2c_smbus \
 			           pinctrl_intel ; do
-				./kconfig-cli -l 1 -s tests/linux module-config-show "${mod}"
+				./kconfig-cli -l 1 -s tests/linux module-show-symbol "${mod}"
 			done
 			;;
 		*)
@@ -44,7 +44,7 @@ trap out EXIT INT TERM HUP
 tests=(
 	symbol-list
 	help-list
-	module-config-show
+	module-show-symbol
 )
 
 for t in "${tests[@]}" ; do
