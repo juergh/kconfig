@@ -509,17 +509,16 @@ class Kconfig():
         if not self._makefiles:
             self._makefiles = self._find_makefiles()
 
+        # Module object filename
+        fname = module.replace('_', '|').replace('-', '[_-]').replace('|', '[_-]') + '.o'
+
         for f in self._makefiles:
             with open(os.path.join(self.ksource, f)) as fh:
                 for line in read_line(fh):
-                    m = re.match(r'obj-\$\(CONFIG_([^\)]+)\)\s*[+:]?=\s*(.*)',
+                    m = re.match(r'obj-\$\(CONFIG_([^\)]+)\)\s*[+:]?=.*\b{}\b'.format(fname),
                                  line)
                     if m:
-                        for g in m.group(2).split(' '):
-                            if g in (module + '.o',
-                                     module.replace('_', '-') + '.o',
-                                     module.replace('-', '_') + '.o'):
-                                return m.group(1)
+                        return m.group(1)
         return ''
 
     def symbol_to_module(self, symbol):
