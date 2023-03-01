@@ -68,7 +68,7 @@ def do_symbol_show(kconfig, args):
     if args.name not in kconfig.symbols:
         error('Invalid symbol name: {}'.format(args.name))
         sys.exit(1)
-    print(json.dumps(kconfig.symbols[args.name], indent=4))
+    print(json.dumps(kconfig.symbols[args.name], sort_keys=True, indent=4))
 
 @add_help('Show the symbol that enables the provided module')
 @add_arg('name', nargs='+', help='Kernel module name')
@@ -79,7 +79,8 @@ def do_module_show_symbol(kconfig, args):
 @add_help('Show the module that is enabled by the provided symbol')
 @add_arg('name', help='Symbol name')
 def do_symbol_show_module(kconfig, args):
-    print(json.dumps(kconfig.symbol_to_module(args.name), indent=4))
+    print(json.dumps(kconfig.symbol_to_module(args.name), sort_keys=True,
+                     indent=4))
 
 @add_help('Search symbols')
 @add_arg('-v', '--verbose', action='store_true', help='Show all symbol data')
@@ -95,7 +96,7 @@ def do_search_symbols(kconfig, args):
 
 @add_help('Dump the symbol data to the screen')
 def do_dump(kconfig, _args):
-    print(json.dumps(kconfig.symbols, indent=4))
+    print(json.dumps(kconfig.symbols, sort_keys=True, indent=4))
 
 @add_help('Test the different regex expressions')
 def do_test(_kconfig, _args):
