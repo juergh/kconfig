@@ -82,10 +82,16 @@ def do_symbol_show_module(kconfig, args):
     print(json.dumps(kconfig.symbol_to_module(args.name), indent=4))
 
 @add_help('Search symbols')
-@add_arg('--select', nargs='*')
-@add_arg('--depends-on', nargs='*')
+@add_arg('-v', '--verbose', action='store_true', help='Show all symbol data')
+@add_arg('--select', nargs='+', help='Search symbols that select SELECT',)
+@add_arg('--depends-on', nargs='+',
+         help='Search symbols that depend on DEPENDS_ON')
 def do_search_symbols(kconfig, args):
-    print(json.dumps(kconfig.search_symbols(**vars(args)), indent=4))
+    symbols = kconfig.search_symbols(**vars(args))
+    if args.verbose:
+        print(json.dumps(symbols, sort_keys=True, indent=4))
+    else:
+        print('\n'.join(sorted(symbols.keys())))
 
 @add_help('Dump the symbol data to the screen')
 def do_dump(kconfig, _args):
